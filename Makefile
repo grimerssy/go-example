@@ -1,5 +1,5 @@
 .PHONY: init
-# install required proto compilers
+# install required binaries
 init:
 	make update
 	go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
@@ -7,24 +7,30 @@ init:
 	go install github.com/envoyproxy/protoc-gen-validate@latest
 	go install github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-grpc-gateway@latest
 	go install github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-openapiv2@latest
+	go install -mod=mod github.com/onsi/ginkgo/v2/ginkgo
 
 .PHONY: update
 # update .lock files
 update:
 	cd ./api/proto; \
  	buf mod update; \
- 	cd ../..; \
+ 	cd ../..
+
+.PHONY: api
+# generate code from api definitions
+api:
+	make update; \
+	buf generate
 
 .PHONY: gen
-# generate code from api description
+# recursively invoke go:generate tool
 gen:
-	make update; \
- 	buf generate
+	go generate ./...
 
 .PHONY: test
 # run all project tests
 test:
-	go test ./...
+	ginkgo -r --cover
 
 .PHONY: run
 # run the server
