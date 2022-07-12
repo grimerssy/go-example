@@ -1,0 +1,56 @@
+syntax = "proto3";
+
+package v1;
+
+import "google/api/annotations.proto";
+import "protoc-gen-openapiv2/options/annotations.proto";
+import "validate/validate.proto";
+
+option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
+  info: {
+    title: "Auth service"
+    version: "v1"
+  }
+  schemes: HTTP
+  consumes: "application/json"
+  produces: "application/json"
+};
+
+service AuthService {
+  rpc Signup(SignupRequest) returns (SignupResponse) {
+    option (google.api.http) = {
+      post: "/api/v1/signup"
+    };
+  }
+
+  rpc Login(LoginRequest) returns (LoginResponse) {
+    option (google.api.http) = {
+      post: "/api/v1/login"
+    };
+  }
+}
+
+message SignupRequest {
+  string name = 1 [(validate.rules).string = {
+    min_len: 3
+    max_len: 50
+    pattern: "^[a-zA-Z]+$"
+  }];
+  string password = 2 [(validate.rules).string = {
+    min_len: 8
+    max_len: 50
+    pattern: "^[a-zA-Z0-9]+$"
+  }];
+}
+
+message SignupResponse {
+}
+
+message LoginRequest {
+  string name = 1;
+  string password = 2;
+}
+
+message LoginResponse {
+  string access_token = 1;
+}
