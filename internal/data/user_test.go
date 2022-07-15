@@ -85,6 +85,14 @@ var _ = Describe("UserRepository", func() {
 			user *core.User
 
 			err error
+
+			insertIntoOK = func() {
+				dbMock.ExpectExec(
+					fmt.Sprintf(`INSERT INTO %s (.+) VALUES (.+);`,
+						core.UserTable)).
+					WithArgs(user.Name, user.Password).
+					WillReturnResult(sqlmock.NewResult(1, 1))
+			}
 		)
 
 		BeforeEach(func() {
@@ -106,13 +114,23 @@ var _ = Describe("UserRepository", func() {
 			})
 		})
 
-		When("user is not nil", func() {
+		When("INSERT INTO query fails", func() {
 			BeforeEach(func() {
-				user = &core.User{}
-
-				dbMock.ExpectExec(fmt.Sprintf(`INSERT INTO %s (.+) VALUES (.+);`, core.UserTable)).
+				dbMock.ExpectExec(
+					fmt.Sprintf(`INSERT INTO %s (.+) VALUES (.+);`,
+						core.UserTable)).
 					WithArgs(user.Name, user.Password).
-					WillReturnResult(sqlmock.NewResult(1, 1))
+					WillReturnError(errors.New(""))
+			})
+
+			It("fails", func() {
+				Expect(err).NotTo(Succeed())
+			})
+		})
+
+		When("no errors are met", func() {
+			BeforeEach(func() {
+				insertIntoOK()
 			})
 
 			It("succeeds", func() {
@@ -132,6 +150,15 @@ var _ = Describe("UserRepository", func() {
 
 			user *core.User
 			err  error
+
+			selectOK = func() {
+				dbMock.ExpectQuery(
+					fmt.Sprintf("SELECT .+ FROM %s WHERE id = .+ LIMIT 1;",
+						core.UserTable)).
+					WithArgs(id).
+					WillReturnRows(sqlmock.NewRows(core.UserRowNames).
+						AddRow(core.UserRowMocks...))
+			}
 		)
 
 		BeforeEach(func() {
@@ -143,11 +170,31 @@ var _ = Describe("UserRepository", func() {
 			user, err = ur.GetUserById(ctx, id)
 		})
 
+		When("SELECT query fails", func() {
+			BeforeEach(func() {
+				dbMock.ExpectQuery(
+					fmt.Sprintf(`SELECT .+ FROM %s WHERE id = .+ LIMIT 1;`,
+						core.UserTable)).
+					WithArgs(id).
+					WillReturnError(errors.New(""))
+			})
+
+			It("returns nil *User", func() {
+				Expect(user).To(BeNil())
+			})
+			It("fails", func() {
+				Expect(err).NotTo(Succeed())
+			})
+			It("returns ErrUserNotFound", func() {
+				Expect(errors.Is(err, core.ErrUserNotFound)).To(BeTrue())
+			})
+		})
+
 		When("user is not found", func() {
 			BeforeEach(func() {
-				id = 0
-
-				dbMock.ExpectQuery(fmt.Sprintf(`SELECT .+ FROM %s WHERE id = .+ LIMIT 1;`, core.UserTable)).
+				dbMock.ExpectQuery(
+					fmt.Sprintf(`SELECT .+ FROM %s WHERE id = .+ LIMIT 1;`,
+						core.UserTable)).
 					WithArgs(id).
 					WillReturnRows(sqlmock.NewRows(core.UserRowNames))
 			})
@@ -163,14 +210,9 @@ var _ = Describe("UserRepository", func() {
 			})
 		})
 
-		When("user is found", func() {
+		When("no errors are met", func() {
 			BeforeEach(func() {
-				id = 0
-
-				dbMock.ExpectQuery(fmt.Sprintf("SELECT .+ FROM %s WHERE id = .+ LIMIT 1;", core.UserTable)).
-					WithArgs(id).
-					WillReturnRows(sqlmock.NewRows(core.UserRowNames).
-						AddRow(core.UserRowMocks...))
+				selectOK()
 			})
 
 			It("returns non-nil *User", func() {
@@ -189,6 +231,15 @@ var _ = Describe("UserRepository", func() {
 
 			user *core.User
 			err  error
+
+			selectOK = func() {
+				dbMock.ExpectQuery(
+					fmt.Sprintf("SELECT .+ FROM %s WHERE name = .+ LIMIT 1;",
+						core.UserTable)).
+					WithArgs(name).
+					WillReturnRows(sqlmock.NewRows(core.UserRowNames).
+						AddRow(core.UserRowMocks...))
+			}
 		)
 
 		BeforeEach(func() {
@@ -200,15 +251,20 @@ var _ = Describe("UserRepository", func() {
 			user, err = ur.GetUserByName(ctx, name)
 		})
 
-		When("user is not found", func() {
+		When("SELECT query fails", func() {
 			BeforeEach(func() {
-				dbMock.ExpectQuery(fmt.Sprintf(`SELECT .+ FROM %s WHERE name = .+ LIMIT 1;`, core.UserTable)).
+				dbMock.ExpectQuery(
+					fmt.Sprintf(`SELECT .+ FROM %s WHERE name = .+ LIMIT 1;`,
+						core.UserTable)).
 					WithArgs(name).
-					WillReturnRows(sqlmock.NewRows(core.UserRowNames))
+					WillReturnError(errors.New(""))
 			})
 
 			It("returns nil *User", func() {
 				Expect(user).To(BeNil())
+			})
+			It("fails", func() {
+				Expect(err).NotTo(Succeed())
 			})
 			It("returns ErrUserNotFound", func() {
 				Expect(err).NotTo(Succeed())
@@ -216,12 +272,30 @@ var _ = Describe("UserRepository", func() {
 			})
 		})
 
-		When("user is found", func() {
+		When("user is not found", func() {
 			BeforeEach(func() {
-				dbMock.ExpectQuery(fmt.Sprintf("SELECT .+ FROM %s WHERE name = .+ LIMIT 1;", core.UserTable)).
+				dbMock.ExpectQuery(
+					fmt.Sprintf(`SELECT .+ FROM %s WHERE name = .+ LIMIT 1;`,
+						core.UserTable)).
 					WithArgs(name).
-					WillReturnRows(sqlmock.NewRows(core.UserRowNames).
-						AddRow(core.UserRowMocks...))
+					WillReturnRows(sqlmock.NewRows(core.UserRowNames))
+			})
+
+			It("returns nil *User", func() {
+				Expect(user).To(BeNil())
+			})
+			It("fails", func() {
+				Expect(err).NotTo(Succeed())
+			})
+			It("returns ErrUserNotFound", func() {
+				Expect(err).NotTo(Succeed())
+				Expect(errors.Is(err, core.ErrUserNotFound)).To(BeTrue())
+			})
+		})
+
+		When("no errors are met", func() {
+			BeforeEach(func() {
+				selectOK()
 			})
 
 			It("returns non-nil *User", func() {
@@ -239,6 +313,13 @@ var _ = Describe("UserRepository", func() {
 			user *core.User
 
 			err error
+
+			updateOK = func() {
+				dbMock.ExpectExec(fmt.Sprintf(`UPDATE %s SET count = .+`,
+					core.UserTable)).
+					WithArgs(user.Count, user.Id).
+					WillReturnResult(sqlmock.NewResult(1, 1))
+			}
 		)
 
 		BeforeEach(func() {
@@ -260,13 +341,18 @@ var _ = Describe("UserRepository", func() {
 			})
 		})
 
-		When("user is not nil", func() {
+		When("UPDATE query fails", func() {
 			BeforeEach(func() {
-				user = &core.User{}
-
-				dbMock.ExpectExec(fmt.Sprintf(`UPDATE %s SET count = .+`, core.UserTable)).
+				dbMock.ExpectExec(fmt.Sprintf(`UPDATE %s SET count = .+`,
+					core.UserTable)).
 					WithArgs(user.Count, user.Id).
-					WillReturnResult(sqlmock.NewResult(1, 1))
+					WillReturnError(errors.New(""))
+			})
+		})
+
+		When("no errors are met", func() {
+			BeforeEach(func() {
+				updateOK()
 			})
 
 			It("succeeds", func() {
