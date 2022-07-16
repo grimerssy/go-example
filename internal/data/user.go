@@ -9,6 +9,7 @@ import (
 	"strings"
 
 	"github.com/grimerssy/go-example/internal/core"
+	"github.com/grimerssy/go-example/pkg/consts"
 	"github.com/grimerssy/go-example/pkg/database"
 	"github.com/jmoiron/sqlx"
 )
@@ -50,7 +51,7 @@ LIMIT 1;
 `, strings.Join(core.UserRowNames, ", "), core.UserTable)
 	err := r.db.GetContext(ctx, user, query, id)
 	if err != nil {
-		return nil, core.ErrUserNotFound
+		return nil, consts.ErrUserNotFound
 	}
 	return user, nil
 }
@@ -64,7 +65,7 @@ LIMIT 1;
 `, strings.Join(core.UserRowNames, ", "), core.UserTable)
 	err := r.db.GetContext(ctx, user, query, name)
 	if err != nil {
-		return nil, core.ErrUserNotFound
+		return nil, consts.ErrUserNotFound
 	}
 	return user, nil
 }

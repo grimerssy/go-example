@@ -8,6 +8,7 @@ import (
 
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/grimerssy/go-example/internal/core"
+	"github.com/grimerssy/go-example/pkg/consts"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 )
@@ -186,7 +187,7 @@ var _ = Describe("UserRepository", func() {
 				Expect(err).NotTo(Succeed())
 			})
 			It("returns ErrUserNotFound", func() {
-				Expect(errors.Is(err, core.ErrUserNotFound)).To(BeTrue())
+				Expect(errors.Is(err, consts.ErrUserNotFound)).To(BeTrue())
 			})
 		})
 
@@ -206,7 +207,7 @@ var _ = Describe("UserRepository", func() {
 				Expect(err).NotTo(Succeed())
 			})
 			It("returns ErrUserNotFound", func() {
-				Expect(errors.Is(err, core.ErrUserNotFound)).To(BeTrue())
+				Expect(errors.Is(err, consts.ErrUserNotFound)).To(BeTrue())
 			})
 		})
 
@@ -268,7 +269,7 @@ var _ = Describe("UserRepository", func() {
 			})
 			It("returns ErrUserNotFound", func() {
 				Expect(err).NotTo(Succeed())
-				Expect(errors.Is(err, core.ErrUserNotFound)).To(BeTrue())
+				Expect(errors.Is(err, consts.ErrUserNotFound)).To(BeTrue())
 			})
 		})
 
@@ -289,7 +290,7 @@ var _ = Describe("UserRepository", func() {
 			})
 			It("returns ErrUserNotFound", func() {
 				Expect(err).NotTo(Succeed())
-				Expect(errors.Is(err, core.ErrUserNotFound)).To(BeTrue())
+				Expect(errors.Is(err, consts.ErrUserNotFound)).To(BeTrue())
 			})
 		})
 

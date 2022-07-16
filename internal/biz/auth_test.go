@@ -8,6 +8,7 @@ import (
 	"github.com/grimerssy/go-example/internal/core"
 	"github.com/grimerssy/go-example/pkg/auth"
 	authMock "github.com/grimerssy/go-example/pkg/auth/mocks"
+	"github.com/grimerssy/go-example/pkg/consts"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 )
@@ -199,14 +200,14 @@ var _ = Describe("AuthUseCase", func() {
 
 				userRepositoryMock.EXPECT().
 					CreateUser(ctx, user).
-					Return(core.ErrUserAlreadyExists)
+					Return(consts.ErrUserAlreadyExists)
 			})
 
 			It("fails", func() {
 				Expect(err).NotTo(Succeed())
 			})
 			It("returns ErrUserAlreadyExists", func() {
-				Expect(errors.Is(err, core.ErrUserAlreadyExists)).To(BeTrue())
+				Expect(errors.Is(err, consts.ErrUserAlreadyExists)).To(BeTrue())
 			})
 		})
 
@@ -286,7 +287,7 @@ var _ = Describe("AuthUseCase", func() {
 			BeforeEach(func() {
 				userRepositoryMock.EXPECT().
 					GetUserByName(ctx, user.Name).
-					Return(nil, core.ErrUserNotFound)
+					Return(nil, consts.ErrUserNotFound)
 			})
 
 			It("returns nil", func() {
@@ -296,7 +297,7 @@ var _ = Describe("AuthUseCase", func() {
 				Expect(err).NotTo(Succeed())
 			})
 			It("returns ErrUserNotFound", func() {
-				Expect(errors.Is(err, core.ErrUserNotFound)).To(BeTrue())
+				Expect(errors.Is(err, consts.ErrUserNotFound)).To(BeTrue())
 			})
 		})
 
@@ -316,7 +317,7 @@ var _ = Describe("AuthUseCase", func() {
 				Expect(err).NotTo(Succeed())
 			})
 			It("returns ErrInvalidPassword", func() {
-				Expect(errors.Is(err, core.ErrInvalidPassword)).To(BeTrue())
+				Expect(errors.Is(err, consts.ErrInvalidPassword)).To(BeTrue())
 			})
 		})
 

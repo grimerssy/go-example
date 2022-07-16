@@ -8,6 +8,7 @@ import (
 
 	"github.com/grimerssy/go-example/internal/core"
 	"github.com/grimerssy/go-example/pkg/auth"
+	"github.com/grimerssy/go-example/pkg/consts"
 )
 
 type AuthUseCase struct {
@@ -59,7 +60,7 @@ func (uc *AuthUseCase) Login(ctx context.Context, input *core.User) (auth.Tokens
 		return nil, fmt.Errorf("failed to get user: %w", err)
 	}
 	if !uc.passwords.IsPasswordEqualToHash(input.Password, user.Password) {
-		return nil, core.ErrInvalidPassword
+		return nil, consts.ErrInvalidPassword
 	}
 	obfuscatedId, err := uc.ids.ObfuscateId(user.Id)
 	if err != nil {
