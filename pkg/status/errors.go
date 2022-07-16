@@ -54,7 +54,7 @@ func newStatusError(code codes.Code, errMsg, logMsg string) *statusError {
 }
 
 func (e *statusError) Error() string {
-	return e.s.Err().Error()
+	return e.s.Message()
 }
 
 func (e *statusError) GRPCStatus() *status.Status {
@@ -62,7 +62,14 @@ func (e *statusError) GRPCStatus() *status.Status {
 }
 
 func (e *statusError) Is(target error) bool {
-	return errors.Is(e.s.Err(), target)
+	if t, ok := target.(*statusError); ok {
+		return errors.Is(e.s.Err(), t.s.Err()) && e.logMsg == t.logMsg
+	}
+	return e.Error() == target.Error()
+}
+
+func (e *statusError) Unwrap() error {
+	return e.s.Err()
 }
 
 func (e *statusError) LogMessage() string {
