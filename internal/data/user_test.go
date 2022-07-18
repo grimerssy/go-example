@@ -8,7 +8,6 @@ import (
 
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/grimerssy/go-example/internal/core"
-	"github.com/grimerssy/go-example/pkg/consts"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 )
@@ -105,16 +104,6 @@ var _ = Describe("UserRepository", func() {
 			err = ur.CreateUser(ctx, user)
 		})
 
-		When("user is nil", func() {
-			BeforeEach(func() {
-				user = nil
-			})
-
-			It("fails", func() {
-				Expect(err).NotTo(Succeed())
-			})
-		})
-
 		When("INSERT INTO query fails", func() {
 			BeforeEach(func() {
 				dbMock.ExpectExec(
@@ -126,6 +115,9 @@ var _ = Describe("UserRepository", func() {
 
 			It("fails", func() {
 				Expect(err).NotTo(Succeed())
+			})
+			It("returns errUserAlreadyExists", func() {
+				Expect(errors.Is(err, errUserAlreadyExists)).To(BeTrue())
 			})
 		})
 
@@ -186,8 +178,8 @@ var _ = Describe("UserRepository", func() {
 			It("fails", func() {
 				Expect(err).NotTo(Succeed())
 			})
-			It("returns ErrUserNotFound", func() {
-				Expect(errors.Is(err, consts.ErrUserNotFound)).To(BeTrue())
+			It("returns errUserNotFound", func() {
+				Expect(errors.Is(err, errUserNotFound)).To(BeTrue())
 			})
 		})
 
@@ -206,8 +198,8 @@ var _ = Describe("UserRepository", func() {
 			It("fails", func() {
 				Expect(err).NotTo(Succeed())
 			})
-			It("returns ErrUserNotFound", func() {
-				Expect(errors.Is(err, consts.ErrUserNotFound)).To(BeTrue())
+			It("returns errUserNotFound", func() {
+				Expect(errors.Is(err, errUserNotFound)).To(BeTrue())
 			})
 		})
 
@@ -267,9 +259,9 @@ var _ = Describe("UserRepository", func() {
 			It("fails", func() {
 				Expect(err).NotTo(Succeed())
 			})
-			It("returns ErrUserNotFound", func() {
+			It("returns errUserNotFound", func() {
 				Expect(err).NotTo(Succeed())
-				Expect(errors.Is(err, consts.ErrUserNotFound)).To(BeTrue())
+				Expect(errors.Is(err, errUserNotFound)).To(BeTrue())
 			})
 		})
 
@@ -288,9 +280,9 @@ var _ = Describe("UserRepository", func() {
 			It("fails", func() {
 				Expect(err).NotTo(Succeed())
 			})
-			It("returns ErrUserNotFound", func() {
+			It("returns errUserNotFound", func() {
 				Expect(err).NotTo(Succeed())
-				Expect(errors.Is(err, consts.ErrUserNotFound)).To(BeTrue())
+				Expect(errors.Is(err, errUserNotFound)).To(BeTrue())
 			})
 		})
 
@@ -330,16 +322,6 @@ var _ = Describe("UserRepository", func() {
 
 		JustBeforeEach(func() {
 			err = ur.UpdateUserCount(ctx, user)
-		})
-
-		When("user is nil", func() {
-			BeforeEach(func() {
-				user = nil
-			})
-
-			It("fails", func() {
-				Expect(err).NotTo(Succeed())
-			})
 		})
 
 		When("UPDATE query fails", func() {

@@ -8,8 +8,6 @@ import (
 	"github.com/grimerssy/go-example/internal/core"
 	"github.com/grimerssy/go-example/internal/service/v1/mocks"
 	authMocks "github.com/grimerssy/go-example/pkg/auth/mocks"
-	"github.com/grimerssy/go-example/pkg/consts"
-	"github.com/grimerssy/go-example/pkg/log"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 	"google.golang.org/grpc/codes"
@@ -77,9 +75,8 @@ var _ = Describe("AuthService", func() {
 			res *v1.SignupResponse
 			err error
 
-			errCode          codes.Code
-			errMsg           string
-			errHasLogMessage bool
+			statusCode    codes.Code
+			statusMessage string
 		)
 
 		BeforeEach(func() {
@@ -91,16 +88,15 @@ var _ = Describe("AuthService", func() {
 			res, err = as.Signup(ctx, req)
 
 			status := statusFromError(err)
-			errCode = status.Code()
-			errMsg = status.Message()
-			_, errHasLogMessage = err.(log.Messenger)
+			statusCode = status.Code()
+			statusMessage = status.Message()
 		})
 
-		When("ErrUserAlreadyExists occurs", func() {
+		When("errUserAlreadyExists occurs", func() {
 			BeforeEach(func() {
 				authUseCaseMock.EXPECT().
 					Signup(context.Background(), &core.User{}).
-					Return(consts.ErrUserAlreadyExists)
+					Return(errUserAlreadyExists)
 			})
 
 			It("returns nil", func() {
@@ -110,13 +106,10 @@ var _ = Describe("AuthService", func() {
 				Expect(err).NotTo(Succeed())
 			})
 			It("returns error with AlreadyExists code", func() {
-				Expect(errCode).To(Equal(codes.AlreadyExists))
+				Expect(statusCode).To(Equal(codes.AlreadyExists))
 			})
-			It("returns error with ErrUserAlreadyExists message", func() {
-				Expect(errMsg).To(Equal(consts.ErrUserAlreadyExists.Error()))
-			})
-			It("returns error with log message", func() {
-				Expect(errHasLogMessage).To(BeTrue())
+			It("returns error with errUserAlreadyExists message", func() {
+				Expect(statusMessage).To(Equal(errUserAlreadyExists.Error()))
 			})
 		})
 
@@ -134,13 +127,7 @@ var _ = Describe("AuthService", func() {
 				Expect(err).NotTo(Succeed())
 			})
 			It("returns error with Unknown code", func() {
-				Expect(errCode).To(Equal(codes.Unknown))
-			})
-			It("returns error with UnexpectedErrorMessage", func() {
-				Expect(errMsg).To(Equal(consts.UnexpectedErrorMessage))
-			})
-			It("returns error with log message", func() {
-				Expect(errHasLogMessage).To(BeTrue())
+				Expect(statusCode).To(Equal(codes.Unknown))
 			})
 		})
 
@@ -168,9 +155,8 @@ var _ = Describe("AuthService", func() {
 			res *v1.LoginResponse
 			err error
 
-			errCode          codes.Code
-			errMsg           string
-			errHasLogMessage bool
+			statusCode    codes.Code
+			statusMessage string
 		)
 
 		BeforeEach(func() {
@@ -182,16 +168,15 @@ var _ = Describe("AuthService", func() {
 			res, err = as.Login(ctx, req)
 
 			status := statusFromError(err)
-			errCode = status.Code()
-			errMsg = status.Message()
-			_, errHasLogMessage = err.(log.Messenger)
+			statusCode = status.Code()
+			statusMessage = status.Message()
 		})
 
-		When("ErrUserNotFound occurs", func() {
+		When("errUserNotFound occurs", func() {
 			BeforeEach(func() {
 				authUseCaseMock.EXPECT().
 					Login(context.Background(), &core.User{}).
-					Return(nil, consts.ErrUserNotFound)
+					Return(nil, errUserNotFound)
 			})
 
 			It("returns nil", func() {
@@ -201,21 +186,18 @@ var _ = Describe("AuthService", func() {
 				Expect(err).NotTo(Succeed())
 			})
 			It("returns error with NotFound code", func() {
-				Expect(errCode).To(Equal(codes.NotFound))
+				Expect(statusCode).To(Equal(codes.NotFound))
 			})
-			It("returns error with ErrUserNotFound message", func() {
-				Expect(errMsg).To(Equal(consts.ErrUserNotFound.Error()))
-			})
-			It("returns error with log message", func() {
-				Expect(errHasLogMessage).To(BeTrue())
+			It("returns error with errUserNotFound message", func() {
+				Expect(statusMessage).To(Equal(errUserNotFound.Error()))
 			})
 		})
 
-		When("ErrInvalidPassword occurs", func() {
+		When("errInvalidPassword occurs", func() {
 			BeforeEach(func() {
 				authUseCaseMock.EXPECT().
 					Login(context.Background(), &core.User{}).
-					Return(nil, consts.ErrInvalidPassword)
+					Return(nil, errInvalidPassword)
 			})
 
 			It("returns nil", func() {
@@ -225,13 +207,10 @@ var _ = Describe("AuthService", func() {
 				Expect(err).NotTo(Succeed())
 			})
 			It("returns error with Unauthenticated code", func() {
-				Expect(errCode).To(Equal(codes.Unauthenticated))
+				Expect(statusCode).To(Equal(codes.Unauthenticated))
 			})
-			It("returns error with ErrInvalidPassword message", func() {
-				Expect(errMsg).To(Equal(consts.ErrInvalidPassword.Error()))
-			})
-			It("returns error with log message", func() {
-				Expect(errHasLogMessage).To(BeTrue())
+			It("returns error with errInvalidPassword message", func() {
+				Expect(statusMessage).To(Equal(errInvalidPassword.Error()))
 			})
 		})
 
@@ -249,13 +228,7 @@ var _ = Describe("AuthService", func() {
 				Expect(err).NotTo(Succeed())
 			})
 			It("returns error with Unknown code", func() {
-				Expect(errCode).To(Equal(codes.Unknown))
-			})
-			It("returns error with UnexpectedErrorMessage", func() {
-				Expect(errMsg).To(Equal(consts.UnexpectedErrorMessage))
-			})
-			It("returns error with log message", func() {
-				Expect(errHasLogMessage).To(BeTrue())
+				Expect(statusCode).To(Equal(codes.Unknown))
 			})
 		})
 

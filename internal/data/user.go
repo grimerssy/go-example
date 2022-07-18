@@ -3,14 +3,13 @@ package data
 import (
 	"context"
 	"database/sql"
-	"errors"
 	"fmt"
 	"reflect"
 	"strings"
 
 	"github.com/grimerssy/go-example/internal/core"
-	"github.com/grimerssy/go-example/pkg/consts"
 	"github.com/grimerssy/go-example/pkg/database"
+	"github.com/grimerssy/go-example/pkg/errors"
 	"github.com/jmoiron/sqlx"
 )
 
@@ -28,16 +27,13 @@ func NewUserRepository(db *sql.DB) *UserRepository {
 }
 
 func (r *UserRepository) CreateUser(ctx context.Context, user *core.User) error {
-	if user == nil {
-		return errors.New("user is nil")
-	}
 	query := fmt.Sprintf(`
 INSERT INTO %s (name, password)
 VALUES (:name, :password);
 `, core.UserTable)
 	_, err := r.db.NamedExecContext(ctx, query, user)
 	if err != nil {
-		return fmt.Errorf("failed to execute query: %w", err)
+		return errors.AlreadyExists("user", 0)
 	}
 	return nil
 }
@@ -51,7 +47,7 @@ LIMIT 1;
 `, strings.Join(core.UserRowNames, ", "), core.UserTable)
 	err := r.db.GetContext(ctx, user, query, id)
 	if err != nil {
-		return nil, consts.ErrUserNotFound
+		return nil, errors.NotFound("user", 0)
 	}
 	return user, nil
 }
@@ -65,15 +61,12 @@ LIMIT 1;
 `, strings.Join(core.UserRowNames, ", "), core.UserTable)
 	err := r.db.GetContext(ctx, user, query, name)
 	if err != nil {
-		return nil, consts.ErrUserNotFound
+		return nil, errors.NotFound("user", 0)
 	}
 	return user, nil
 }
 
 func (r *UserRepository) UpdateUserCount(ctx context.Context, user *core.User) error {
-	if user == nil {
-		return errors.New("user is nil")
-	}
 	query := fmt.Sprintf(`
 UPDATE %s
 SET count = :count
@@ -81,7 +74,7 @@ WHERE id = :id
 `, core.UserTable)
 	_, err := r.db.NamedExecContext(ctx, query, user)
 	if err != nil {
-		return fmt.Errorf("failed to execute query: %w", err)
+		return errors.Wrap(err, 0)
 	}
 	return nil
 }

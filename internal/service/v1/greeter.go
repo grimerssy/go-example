@@ -6,8 +6,7 @@ import (
 
 	v1 "github.com/grimerssy/go-example/internal/api/v1"
 	"github.com/grimerssy/go-example/internal/core"
-	"github.com/grimerssy/go-example/pkg/consts"
-	"github.com/grimerssy/go-example/pkg/status"
+	"github.com/grimerssy/go-example/pkg/errors"
 )
 
 //go:generate mockery --name=greeterUseCase --with-expecter --exported
@@ -31,11 +30,11 @@ func NewGreeterService(greeterUseCase greeterUseCase) *GreeterService {
 func (s *GreeterService) Greet(ctx context.Context, req *v1.GreetRequest) (*v1.GreetResponse, error) {
 	userId, ok := ctx.Value(core.UserIdKey).(int64)
 	if !ok {
-		return nil, status.WrapError(consts.ErrContextHasNoUserId)
+		return nil, errors.ContextHasNoValue("user id", 0)
 	}
 	message, err := s.uc.Greet(ctx, userId)
 	if err != nil {
-		return nil, status.WrapError(err)
+		return nil, errors.Wrap(err, 0)
 	}
 	res := &v1.GreetResponse{
 		Message: message,

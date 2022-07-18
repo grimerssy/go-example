@@ -4,6 +4,8 @@ import (
 	"context"
 	"fmt"
 	"reflect"
+
+	"github.com/grimerssy/go-example/pkg/errors"
 )
 
 type GreeterUseCase struct {
@@ -22,12 +24,13 @@ func NewGreeterUseCase(userRepository userRepository) *GreeterUseCase {
 func (uc *GreeterUseCase) Greet(ctx context.Context, userId int64) (string, error) {
 	user, err := uc.users.GetUserById(ctx, userId)
 	if err != nil {
-		return "", fmt.Errorf("failed to get user by id: %w", err)
+		return "", errors.Wrap(err, 0)
 	}
 	user.Count++
 	err = uc.users.UpdateUserCount(ctx, user)
 	if err != nil {
-		return "", fmt.Errorf("failed to update user count: %w", err)
+		return "", errors.Wrap(err, 0)
 	}
-	return fmt.Sprintf("Glad to see you! It's your %d time here", user.Count), nil
+	return fmt.Sprintf("Glad to see you, %s! It's your %d time here",
+		user.Name, user.Count), nil
 }

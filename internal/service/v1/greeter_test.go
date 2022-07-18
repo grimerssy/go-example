@@ -7,8 +7,6 @@ import (
 	v1 "github.com/grimerssy/go-example/internal/api/v1"
 	"github.com/grimerssy/go-example/internal/core"
 	"github.com/grimerssy/go-example/internal/service/v1/mocks"
-	"github.com/grimerssy/go-example/pkg/consts"
-	"github.com/grimerssy/go-example/pkg/log"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 	"google.golang.org/grpc/codes"
@@ -78,9 +76,8 @@ var _ = Describe("GreeterService", func() {
 			res *v1.GreetResponse
 			err error
 
-			errCode          codes.Code
-			errMsg           string
-			errHasLogMessage bool
+			statusCode    codes.Code
+			statusMessage string
 		)
 
 		BeforeEach(func() {
@@ -92,16 +89,15 @@ var _ = Describe("GreeterService", func() {
 			res, err = gs.Greet(ctx, req)
 
 			status := statusFromError(err)
-			errCode = status.Code()
-			errMsg = status.Message()
-			_, errHasLogMessage = err.(log.Messenger)
+			statusCode = status.Code()
+			statusMessage = status.Message()
 		})
 
-		When("ErrContextHasNoUserId occurs", func() {
+		When("errContextHasNoUserId occurs", func() {
 			BeforeEach(func() {
 				greeterUseCaseMock.EXPECT().
 					Greet(ctx, userId).
-					Return("", consts.ErrContextHasNoUserId)
+					Return("", errContextHasNoUserId)
 			})
 
 			It("returns nil", func() {
@@ -111,21 +107,18 @@ var _ = Describe("GreeterService", func() {
 				Expect(err).NotTo(Succeed())
 			})
 			It("returns error with Internal code", func() {
-				Expect(errCode).To(Equal(codes.Internal))
+				Expect(statusCode).To(Equal(codes.Internal))
 			})
-			It("returns error with ErrContextHasNoUserId message", func() {
-				Expect(errMsg).To(Equal(consts.ErrContextHasNoUserId.Error()))
-			})
-			It("returns error with log message", func() {
-				Expect(errHasLogMessage).To(BeTrue())
+			It("returns error with errContextHasNoUserId message", func() {
+				Expect(statusMessage).To(Equal(errContextHasNoUserId.Error()))
 			})
 		})
 
-		When("ErrUserNotFound occurs", func() {
+		When("errUserNotFound occurs", func() {
 			BeforeEach(func() {
 				greeterUseCaseMock.EXPECT().
 					Greet(ctx, userId).
-					Return("", consts.ErrUserNotFound)
+					Return("", errUserNotFound)
 			})
 
 			It("returns nil", func() {
@@ -135,13 +128,10 @@ var _ = Describe("GreeterService", func() {
 				Expect(err).NotTo(Succeed())
 			})
 			It("returns error with NotFound code", func() {
-				Expect(errCode).To(Equal(codes.NotFound))
+				Expect(statusCode).To(Equal(codes.NotFound))
 			})
-			It("returns error with ErrUserNotFound message", func() {
-				Expect(errMsg).To(Equal(consts.ErrUserNotFound.Error()))
-			})
-			It("returns error with log message", func() {
-				Expect(errHasLogMessage).To(BeTrue())
+			It("returns error with errUserNotFound message", func() {
+				Expect(statusMessage).To(Equal(errUserNotFound.Error()))
 			})
 		})
 
@@ -159,13 +149,7 @@ var _ = Describe("GreeterService", func() {
 				Expect(err).NotTo(Succeed())
 			})
 			It("returns error with Unknown code", func() {
-				Expect(errCode).To(Equal(codes.Unknown))
-			})
-			It("returns error with UnexpectedErrorMessage", func() {
-				Expect(errMsg).To(Equal(consts.UnexpectedErrorMessage))
-			})
-			It("returns error with log message", func() {
-				Expect(errHasLogMessage).To(BeTrue())
+				Expect(statusCode).To(Equal(codes.Unknown))
 			})
 		})
 

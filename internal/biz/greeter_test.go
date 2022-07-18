@@ -6,7 +6,6 @@ import (
 
 	"github.com/grimerssy/go-example/internal/biz/mocks"
 	"github.com/grimerssy/go-example/internal/core"
-	"github.com/grimerssy/go-example/pkg/consts"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 )
@@ -112,11 +111,11 @@ var _ = Describe("GreeterUseCase", func() {
 			})
 		})
 
-		When("getting user by id fails with ErrUserNotFound", func() {
+		When("getting user by id fails with errUserNotFound", func() {
 			BeforeEach(func() {
 				userRepositoryMock.EXPECT().
 					GetUserById(ctx, userId).
-					Return(nil, consts.ErrUserNotFound)
+					Return(nil, errUserNotFound)
 			})
 
 			It("returns empty string", func() {
@@ -125,8 +124,8 @@ var _ = Describe("GreeterUseCase", func() {
 			It("fails", func() {
 				Expect(err).NotTo(Succeed())
 			})
-			It("returns ErrUserNotFound", func() {
-				Expect(errors.Is(err, consts.ErrUserNotFound)).To(BeTrue())
+			It("returns errUserNotFound", func() {
+				Expect(errors.Is(err, errUserNotFound)).To(BeTrue())
 			})
 		})
 
