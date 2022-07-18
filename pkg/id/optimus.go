@@ -6,7 +6,7 @@ import (
 	"github.com/pjebs/optimus-go"
 )
 
-type OptimusConfig struct {
+type ConfigOptimus struct {
 	Prime  uint64
 	Random uint64
 }
@@ -15,7 +15,7 @@ type Optimus struct {
 	core optimus.Optimus
 }
 
-func NewOptimus(cfg OptimusConfig) *Optimus {
+func NewOptimus(cfg ConfigOptimus) *Optimus {
 	optimus.MAX_INT = math.MaxInt64
 
 	return &Optimus{

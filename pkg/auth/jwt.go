@@ -25,17 +25,17 @@ func NewJWT(cfg ConfigJWT) *JWT {
 	}
 }
 
-func (a *JWT) DefaultClaims() Claims {
+func (j *JWT) DefaultClaims() Claims {
 	return jwt.StandardClaims{
-		ExpiresAt: time.Now().Add(a.tokenTTL).Unix(),
+		ExpiresAt: time.Now().Add(j.tokenTTL).Unix(),
 		IssuedAt:  time.Now().Unix(),
 	}
 }
 
-func (a *JWT) GenerateTokens(claims Claims) (Tokens, error) {
+func (j *JWT) GenerateTokens(claims Claims) (Tokens, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 
-	accessToken, err := token.SignedString([]byte(a.signingString))
+	accessToken, err := token.SignedString([]byte(j.signingString))
 	if err != nil {
 		return nil, err
 	}
@@ -43,13 +43,13 @@ func (a *JWT) GenerateTokens(claims Claims) (Tokens, error) {
 	return newTokens(accessToken), nil
 }
 
-func (a *JWT) ParseTokens(tokens Tokens, claims Claims) (Claims, error) {
+func (j *JWT) ParseTokens(tokens Tokens, claims Claims) (Claims, error) {
 	keyFunc := func(token *jwt.Token) (any, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, errors.New("invalid signing method")
 		}
 
-		return []byte(a.signingString), nil
+		return []byte(j.signingString), nil
 	}
 
 	token, err := jwt.ParseWithClaims(tokens.AccessToken(), claims, keyFunc)

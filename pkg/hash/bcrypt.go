@@ -18,11 +18,11 @@ func NewBcrypt(cfg ConfigBcrypt) *Bcrypt {
 	}
 }
 
-func (h *Bcrypt) HashPassword(password string) (string, error) {
-	hash, err := bcrypt.GenerateFromPassword([]byte(password), h.cost)
+func (b *Bcrypt) HashPassword(password string) (string, error) {
+	hash, err := bcrypt.GenerateFromPassword([]byte(password), b.cost)
 	return string(hash), err
 }
 
-func (h *Bcrypt) IsPasswordEqualToHash(password string, hash string) bool {
+func (b *Bcrypt) IsPasswordEqualToHash(password string, hash string) bool {
 	return bcrypt.CompareHashAndPassword([]byte(hash), []byte(password)) == nil
 }
