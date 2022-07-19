@@ -4,10 +4,36 @@ import (
 	"time"
 
 	"go.uber.org/zap"
+	"go.uber.org/zap/zapcore"
 )
 
+type ConfigZap struct {
+	IsDevelopment bool
+	Level         string
+	OutputPaths   []string
+}
+
 type Zap struct {
-	logger zap.Logger
+	l *zap.Logger
+}
+
+func NewZap(cfg ConfigZap) *Zap {
+	l := zap.NewProductionConfig()
+	if cfg.IsDevelopment {
+		l = zap.NewDevelopmentConfig()
+	}
+	l.Level = zap.NewAtomicLevelAt(toZapLevel(getLevel(cfg.Level)))
+	if len(cfg.OutputPaths) != 0 {
+		l.OutputPaths = cfg.OutputPaths
+		l.ErrorOutputPaths = cfg.OutputPaths
+	}
+	logger, err := l.Build()
+	if err != nil {
+		panic(err)
+	}
+	return &Zap{
+		l: logger,
+	}
 }
 
 func (z Zap) Log(lvl Level, msg string, fields ...Field) {
@@ -33,22 +59,15 @@ func (Zap) WithDuration(key string, val time.Duration) Field {
 }
 
 func (z Zap) getLogFunc(lvl Level) func(msg string, fields ...zap.Field) {
-	switch lvl {
-	case Debug:
-		return z.logger.Debug
-	case Info:
-		return z.logger.Info
-	case Warn:
-		return z.logger.Warn
-	case Error:
-		return z.logger.Error
-	case Fatal:
-		return z.logger.Fatal
-	case Panic:
-		return z.logger.Panic
-	default:
-		panic("did not match the log level")
+	m := map[Level]func(string, ...zap.Field){
+		Debug: z.l.Debug,
+		Info:  z.l.Info,
+		Warn:  z.l.Warn,
+		Error: z.l.Error,
+		Fatal: z.l.Fatal,
+		Panic: z.l.Panic,
 	}
+	return m[lvl]
 }
 
 func (Zap) convertFields(fs []Field) []zap.Field {
@@ -57,4 +76,16 @@ func (Zap) convertFields(fs []Field) []zap.Field {
 		zfs[i] = v.zap
 	}
 	return zfs
+}
+
+func toZapLevel(lvl Level) zapcore.Level {
+	m := map[Level]zapcore.Level{
+		Debug: zapcore.DebugLevel,
+		Info:  zapcore.InfoLevel,
+		Warn:  zapcore.WarnLevel,
+		Error: zapcore.ErrorLevel,
+		Fatal: zapcore.FatalLevel,
+		Panic: zapcore.PanicLevel,
+	}
+	return m[lvl]
 }
