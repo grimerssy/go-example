@@ -5,7 +5,7 @@ import (
 
 	"github.com/grimerssy/go-example/pkg/log"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 func UnaryServerInterceptor(logger logger) grpc.UnaryServerInterceptor {
@@ -13,73 +13,19 @@ func UnaryServerInterceptor(logger logger) grpc.UnaryServerInterceptor {
 		handler grpc.UnaryHandler) (interface{}, error) {
 		stopTimer := startTimer()
 		res, err := handler(ctx, req)
-		code := getGrpcCode(err)
-		logger.Log(
-			getLogLevel(code),
-			err.Error(),
+		duration := stopTimer()
+		code := status.Code(err)
+		lvl := getLogLevel(code)
+		msg := err.Error()
+		fields := []log.Field{
 			logger.WithString("gRPC-code", code.String()),
-			logger.WithStrings("callers", getCallers(err)),
-			logger.WithDuration("time-taken", stopTimer()))
+			logger.WithDuration("time-taken", duration),
+		}
+		callers := getCallers(err)
+		if len(callers) > 0 {
+			fields = append(fields, logger.WithStrings("callers", callers))
+		}
+		logger.Log(lvl, msg, fields...)
 		return res, err
 	}
-}
-
-func getLogLevel(code codes.Code) log.Level {
-	switch code {
-	case codes.OK:
-		return log.Info
-	case codes.Canceled:
-		return log.Info
-	case codes.Unknown:
-		return log.Error
-	case codes.InvalidArgument:
-		return log.Info
-	case codes.DeadlineExceeded:
-		return log.Warn
-	case codes.NotFound:
-		return log.Info
-	case codes.AlreadyExists:
-		return log.Info
-	case codes.PermissionDenied:
-		return log.Warn
-	case codes.ResourceExhausted:
-		return log.Warn
-	case codes.FailedPrecondition:
-		return log.Warn
-	case codes.Aborted:
-		return log.Warn
-	case codes.OutOfRange:
-		return log.Warn
-	case codes.Unimplemented:
-		return log.Error
-	case codes.Internal:
-		return log.Error
-	case codes.Unavailable:
-		return log.Warn
-	case codes.DataLoss:
-		return log.Error
-	case codes.Unauthenticated:
-		return log.Info
-	default:
-		panic("did not match gRpc-code")
-	}
-}
-
-func getGrpcCode(err error) codes.Code {
-	if err == nil {
-		return codes.OK
-	}
-	c, ok := err.(interface{ Code() codes.Code })
-	if !ok {
-		return codes.Unknown
-	}
-	return c.Code()
-}
-
-func getCallers(err error) []string {
-	c, ok := err.(interface{ Callers() []string })
-	if !ok {
-		return []string{}
-	}
-	return c.Callers()
 }
