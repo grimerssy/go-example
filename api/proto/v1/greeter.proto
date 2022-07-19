@@ -18,7 +18,7 @@ option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
 service GreeterService {
   rpc Greet(GreetRequest) returns (GreetResponse) {
     option (google.api.http) = {
-      get: "/api/v1/greet"
+      get: "/v1/greet"
     };
   }
 }

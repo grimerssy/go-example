@@ -19,13 +19,13 @@ option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
 service AuthService {
   rpc Signup(SignupRequest) returns (SignupResponse) {
     option (google.api.http) = {
-      post: "/api/v1/signup"
+      post: "/v1/signup"
     };
   }
 
   rpc Login(LoginRequest) returns (LoginResponse) {
     option (google.api.http) = {
-      post: "/api/v1/login"
+      post: "/v1/login"
     };
   }
 }

@@ -19,7 +19,7 @@
     "application/json"
   ],
   "paths": {
-    "/api/v1/greet": {
+    "/v1/greet": {
       "get": {
         "operationId": "GreeterService_Greet",
         "responses": {

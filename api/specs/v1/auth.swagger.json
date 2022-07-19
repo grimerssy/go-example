@@ -19,7 +19,7 @@
     "application/json"
   ],
   "paths": {
-    "/api/v1/login": {
+    "/v1/login": {
       "post": {
         "operationId": "AuthService_Login",
         "responses": {
@@ -55,7 +55,7 @@
         ]
       }
     },
-    "/api/v1/signup": {
+    "/v1/signup": {
       "post": {
         "operationId": "AuthService_Signup",
         "responses": {
