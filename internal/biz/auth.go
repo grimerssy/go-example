@@ -72,8 +72,8 @@ func (uc *AuthUseCase) Login(ctx context.Context, input *core.User) (auth.Tokens
 	return tokens, nil
 }
 
-func (uc *AuthUseCase) GetUserId(ctx context.Context, tokens auth.Tokens) (int64, error) {
-	claims, err := uc.tokens.ParseTokens(tokens, &userIdClaims{})
+func (uc *AuthUseCase) GetUserId(ctx context.Context, token auth.AccessToken) (int64, error) {
+	claims, err := uc.tokens.ParseToken(token, &userIdClaims{})
 	if err != nil {
 		return 0, errors.Wrap(err, 0)
 	}

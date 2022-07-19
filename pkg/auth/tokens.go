@@ -2,23 +2,38 @@ package auth
 
 //go:generate mockery --name=Tokens --with-expecter
 type Tokens interface {
-	accessToken
+	AccessToken
 }
 
-type accessToken interface {
+//go:generate mockery --name=AccessToken --with-expecter
+type AccessToken interface {
 	AccessToken() string
 }
 
 type tokens struct {
-	accessToken string
+	access AccessToken
 }
 
-func newTokens(accessToken string) *tokens {
+func NewTokens(access string) *tokens {
 	return &tokens{
-		accessToken: accessToken,
+		access: NewAccessToken(access),
 	}
 }
 
 func (t *tokens) AccessToken() string {
-	return t.accessToken
+	return t.access.AccessToken()
+}
+
+type accessToken struct {
+	token string
+}
+
+func NewAccessToken(token string) *accessToken {
+	return &accessToken{
+		token: token,
+	}
+}
+
+func (a *accessToken) AccessToken() string {
+	return a.token
 }

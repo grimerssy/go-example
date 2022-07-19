@@ -105,13 +105,13 @@ func (_c *TokenManager_GenerateTokens_Call) Return(_a0 auth.Tokens, _a1 error) *
 	return _c
 }
 
-// ParseTokens provides a mock function with given fields: tokens, claims
-func (_m *TokenManager) ParseTokens(tokens auth.Tokens, claims auth.Claims) (auth.Claims, error) {
-	ret := _m.Called(tokens, claims)
+// ParseToken provides a mock function with given fields: token, claims
+func (_m *TokenManager) ParseToken(token auth.AccessToken, claims auth.Claims) (auth.Claims, error) {
+	ret := _m.Called(token, claims)
 
 	var r0 auth.Claims
-	if rf, ok := ret.Get(0).(func(auth.Tokens, auth.Claims) auth.Claims); ok {
-		r0 = rf(tokens, claims)
+	if rf, ok := ret.Get(0).(func(auth.AccessToken, auth.Claims) auth.Claims); ok {
+		r0 = rf(token, claims)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).(auth.Claims)
@@ -119,8 +119,8 @@ func (_m *TokenManager) ParseTokens(tokens auth.Tokens, claims auth.Claims) (aut
 	}
 
 	var r1 error
-	if rf, ok := ret.Get(1).(func(auth.Tokens, auth.Claims) error); ok {
-		r1 = rf(tokens, claims)
+	if rf, ok := ret.Get(1).(func(auth.AccessToken, auth.Claims) error); ok {
+		r1 = rf(token, claims)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -128,26 +128,26 @@ func (_m *TokenManager) ParseTokens(tokens auth.Tokens, claims auth.Claims) (aut
 	return r0, r1
 }
 
-// TokenManager_ParseTokens_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'ParseTokens'
-type TokenManager_ParseTokens_Call struct {
+// TokenManager_ParseToken_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'ParseToken'
+type TokenManager_ParseToken_Call struct {
 	*mock.Call
 }
 
-// ParseTokens is a helper method to define mock.On call
-//  - tokens auth.Tokens
+// ParseToken is a helper method to define mock.On call
+//  - token auth.AccessToken
 //  - claims auth.Claims
-func (_e *TokenManager_Expecter) ParseTokens(tokens interface{}, claims interface{}) *TokenManager_ParseTokens_Call {
-	return &TokenManager_ParseTokens_Call{Call: _e.mock.On("ParseTokens", tokens, claims)}
+func (_e *TokenManager_Expecter) ParseToken(token interface{}, claims interface{}) *TokenManager_ParseToken_Call {
+	return &TokenManager_ParseToken_Call{Call: _e.mock.On("ParseToken", token, claims)}
 }
 
-func (_c *TokenManager_ParseTokens_Call) Run(run func(tokens auth.Tokens, claims auth.Claims)) *TokenManager_ParseTokens_Call {
+func (_c *TokenManager_ParseToken_Call) Run(run func(token auth.AccessToken, claims auth.Claims)) *TokenManager_ParseToken_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(auth.Tokens), args[1].(auth.Claims))
+		run(args[0].(auth.AccessToken), args[1].(auth.Claims))
 	})
 	return _c
 }
 
-func (_c *TokenManager_ParseTokens_Call) Return(_a0 auth.Claims, _a1 error) *TokenManager_ParseTokens_Call {
+func (_c *TokenManager_ParseToken_Call) Return(_a0 auth.Claims, _a1 error) *TokenManager_ParseToken_Call {
 	_c.Call.Return(_a0, _a1)
 	return _c
 }

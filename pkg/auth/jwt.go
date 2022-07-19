@@ -40,10 +40,10 @@ func (j *JWT) GenerateTokens(claims Claims) (Tokens, error) {
 		return nil, err
 	}
 
-	return newTokens(accessToken), nil
+	return NewTokens(accessToken), nil
 }
 
-func (j *JWT) ParseTokens(tokens Tokens, claims Claims) (Claims, error) {
+func (j *JWT) ParseToken(token AccessToken, claims Claims) (Claims, error) {
 	keyFunc := func(token *jwt.Token) (any, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, errors.New("invalid signing method")
@@ -52,10 +52,11 @@ func (j *JWT) ParseTokens(tokens Tokens, claims Claims) (Claims, error) {
 		return []byte(j.signingString), nil
 	}
 
-	token, err := jwt.ParseWithClaims(tokens.AccessToken(), claims, keyFunc)
+	parsed, err := jwt.ParseWithClaims(token.AccessToken(), claims,
+		keyFunc)
 	if err != nil {
 		return nil, fmt.Errorf("failed to parse jwt token: %w", err)
 	}
 
-	return token.Claims, nil
+	return parsed.Claims, nil
 }

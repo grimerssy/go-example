@@ -379,8 +379,8 @@ var _ = Describe("AuthUseCase", func() {
 
 	Describe("GetUserId", func() {
 		var (
-			ctx    context.Context
-			tokens auth.Tokens
+			ctx   context.Context
+			token auth.AccessToken
 
 			userId int64
 			err    error
@@ -389,7 +389,7 @@ var _ = Describe("AuthUseCase", func() {
 				claimsBase := authMock.NewClaims(GinkgoT())
 				claims := newUserIdClaims(claimsBase, userId)
 				tokenManagerMock.EXPECT().
-					ParseTokens(tokens, &userIdClaims{}).
+					ParseToken(token, &userIdClaims{}).
 					Return(claims, nil)
 			}
 			deobfuscateIdOK = func() {
@@ -401,17 +401,17 @@ var _ = Describe("AuthUseCase", func() {
 
 		BeforeEach(func() {
 			ctx = context.Background()
-			tokens = authMock.NewTokens(GinkgoT())
+			token = authMock.NewAccessToken(GinkgoT())
 		})
 
 		JustBeforeEach(func() {
-			userId, err = auc.GetUserId(ctx, tokens)
+			userId, err = auc.GetUserId(ctx, token)
 		})
 
-		When("tokens parsing fails", func() {
+		When("token parsing fails", func() {
 			BeforeEach(func() {
 				tokenManagerMock.EXPECT().
-					ParseTokens(tokens, &userIdClaims{}).
+					ParseToken(token, &userIdClaims{}).
 					Return(nil, errors.New(""))
 			})
 
