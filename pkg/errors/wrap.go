@@ -14,12 +14,8 @@ func Wrap(err error, offset int) error {
 		w.callers = append(w.callers, caller)
 		return w
 	}
-	code := codes.Unknown
-	if c, ok := err.(interface{ Code() codes.Code }); ok {
-		code = c.Code()
-	}
 	return &wrappedError{
-		code:    code,
+		code:    status.Code(err),
 		msg:     err.Error(),
 		callers: []string{caller},
 	}
@@ -42,16 +38,12 @@ func (e *wrappedError) Is(target error) bool {
 	return e.code == codes.Unknown && e.msg == target.Error()
 }
 
-func (e *wrappedError) Code() codes.Code {
-	return e.code
+func (e *wrappedError) GRPCStatus() *status.Status {
+	return status.New(e.code, e.msg)
 }
 
 func (e *wrappedError) Callers() []string {
 	return slices.ReverseCopy(e.callers)
-}
-
-func (e *wrappedError) GRPCStatus() *status.Status {
-	return status.New(e.code, e.msg)
 }
 
 func getCaller(n int) string {
