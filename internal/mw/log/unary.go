@@ -22,7 +22,7 @@ func UnaryServerInterceptor(logger logger) grpc.UnaryServerInterceptor {
 			logger.WithDuration("time-taken", duration),
 		}
 		callers := getCallers(err)
-		if len(callers) > 0 {
+		if len(callers) != 0 {
 			fields = append(fields, logger.WithStrings("callers", callers))
 		}
 		logger.Log(lvl, msg, fields...)
