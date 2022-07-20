@@ -10,6 +10,7 @@ import (
 type ConfigZap struct {
 	IsDevelopment bool
 	Level         string
+	Encoding      string
 	OutputPaths   []string
 }
 
@@ -23,10 +24,9 @@ func NewZap(cfg ConfigZap) *Zap {
 		l = zap.NewDevelopmentConfig()
 	}
 	l.Level = zap.NewAtomicLevelAt(toZapLevel(getLevel(cfg.Level)))
-	if len(cfg.OutputPaths) != 0 {
-		l.OutputPaths = cfg.OutputPaths
-		l.ErrorOutputPaths = cfg.OutputPaths
-	}
+	l.Encoding = cfg.Encoding
+	l.OutputPaths = cfg.OutputPaths
+	l.ErrorOutputPaths = cfg.OutputPaths
 	logger, err := l.Build()
 	if err != nil {
 		panic(err)
