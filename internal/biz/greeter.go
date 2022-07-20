@@ -9,10 +9,10 @@ import (
 )
 
 type GreeterUseCase struct {
-	users userRepository
+	users UserRepository
 }
 
-func NewGreeterUseCase(userRepository userRepository) *GreeterUseCase {
+func NewGreeterUseCase(userRepository UserRepository) *GreeterUseCase {
 	if reflect.ValueOf(userRepository).IsNil() {
 		panic("userRepository cannot be nil")
 	}

@@ -6,6 +6,7 @@ import (
 	"github.com/grimerssy/go-example/pkg/auth"
 )
 
-type tokenParser interface {
+//go:generate mockery --name=TokenParser --with-expecter
+type TokenParser interface {
 	GetUserId(ctx context.Context, tokens auth.AccessToken) (int64, error)
 }

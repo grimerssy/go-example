@@ -10,17 +10,17 @@ import (
 	"github.com/grimerssy/go-example/pkg/errors"
 )
 
-//go:generate mockery --name=authUseCase --with-expecter --exported
-type authUseCase interface {
+//go:generate mockery --name=AuthUseCase --with-expecter
+type AuthUseCase interface {
 	Signup(ctx context.Context, user *core.User) error
 	Login(ctx context.Context, input *core.User) (auth.Tokens, error)
 }
 
 type AuthService struct {
-	uc authUseCase
+	uc AuthUseCase
 }
 
-func NewAuthService(authUseCase authUseCase) *AuthService {
+func NewAuthService(authUseCase AuthUseCase) *AuthService {
 	if reflect.ValueOf(authUseCase).IsNil() {
 		panic("authUseCase cannot be nil")
 	}

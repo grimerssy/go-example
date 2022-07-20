@@ -8,7 +8,7 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-func UnaryServerInterceptor(logger logger) grpc.UnaryServerInterceptor {
+func UnaryServerInterceptor(logger Logger) grpc.UnaryServerInterceptor {
 	return func(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo,
 		handler grpc.UnaryHandler) (interface{}, error) {
 		stopTimer := startTimer()

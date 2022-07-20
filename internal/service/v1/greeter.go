@@ -9,16 +9,16 @@ import (
 	"github.com/grimerssy/go-example/pkg/errors"
 )
 
-//go:generate mockery --name=greeterUseCase --with-expecter --exported
-type greeterUseCase interface {
+//go:generate mockery --name=GreeterUseCase --with-expecter
+type GreeterUseCase interface {
 	Greet(ctx context.Context, userId int64) (string, error)
 }
 
 type GreeterService struct {
-	uc greeterUseCase
+	uc GreeterUseCase
 }
 
-func NewGreeterService(greeterUseCase greeterUseCase) *GreeterService {
+func NewGreeterService(greeterUseCase GreeterUseCase) *GreeterService {
 	if reflect.ValueOf(greeterUseCase).IsNil() {
 		panic("greeterUseCase cannot be nil")
 	}

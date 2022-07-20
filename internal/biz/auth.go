@@ -10,17 +10,17 @@ import (
 )
 
 type AuthUseCase struct {
-	tokens    tokenManager
-	ids       idObfuscator
-	passwords passwordHasher
-	users     userRepository
+	tokens    TokenManager
+	ids       IdObfuscator
+	passwords PasswordHasher
+	users     UserRepository
 }
 
 func NewAuthUseCase(
-	tokenManager tokenManager,
-	idObfuscator idObfuscator,
-	passwordHasher passwordHasher,
-	userRepository userRepository) *AuthUseCase {
+	tokenManager TokenManager,
+	idObfuscator IdObfuscator,
+	passwordHasher PasswordHasher,
+	userRepository UserRepository) *AuthUseCase {
 	switch {
 	case reflect.ValueOf(idObfuscator).IsNil():
 		panic("idObfuscator cannot be nil")

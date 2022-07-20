@@ -8,7 +8,7 @@ import (
 	"google.golang.org/grpc"
 )
 
-func UnaryServerInterceptor(parser tokenParser, scheme string) grpc.UnaryServerInterceptor {
+func UnaryServerInterceptor(parser TokenParser, scheme string) grpc.UnaryServerInterceptor {
 	return func(ctx context.Context, req interface{},
 		info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
 		if shouldSkip(info.FullMethod) {

@@ -6,7 +6,8 @@ import (
 	"github.com/grimerssy/go-example/pkg/log"
 )
 
-type logger interface {
+//go:generate mockery --name=Logger --with-expecter
+type Logger interface {
 	Log(lvl log.Level, msg string, fields ...log.Field)
 	WithString(key, val string) log.Field
 	WithStrings(key string, ss []string) log.Field
