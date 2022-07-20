@@ -9,8 +9,9 @@ import (
 )
 
 func UnaryServerInterceptor() grpc.UnaryServerInterceptor {
-	return func(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo,
-		handler grpc.UnaryHandler) (interface{}, error) {
+	return func(ctx context.Context, req interface{},
+		info *grpc.UnaryServerInfo, handler grpc.UnaryHandler,
+	) (interface{}, error) {
 		if err := validate(req); err != nil {
 			return nil, status.Error(codes.InvalidArgument, err.Error())
 		}

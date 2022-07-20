@@ -20,7 +20,8 @@ func NewAuthUseCase(
 	tokenManager TokenManager,
 	idObfuscator IdObfuscator,
 	passwordHasher PasswordHasher,
-	userRepository UserRepository) *AuthUseCase {
+	userRepository UserRepository,
+) *AuthUseCase {
 	switch {
 	case reflect.ValueOf(idObfuscator).IsNil():
 		panic("idObfuscator cannot be nil")
@@ -52,7 +53,8 @@ func (uc *AuthUseCase) Signup(ctx context.Context, user *core.User) error {
 	return nil
 }
 
-func (uc *AuthUseCase) Login(ctx context.Context, input *core.User) (auth.Tokens, error) {
+func (uc *AuthUseCase) Login(ctx context.Context, input *core.User,
+) (auth.Tokens, error) {
 	user, err := uc.users.GetUserByName(ctx, input.Name)
 	if err != nil {
 		return nil, errors.Wrap(err, 0)
@@ -72,7 +74,8 @@ func (uc *AuthUseCase) Login(ctx context.Context, input *core.User) (auth.Tokens
 	return tokens, nil
 }
 
-func (uc *AuthUseCase) GetUserId(ctx context.Context, token auth.AccessToken) (int64, error) {
+func (uc *AuthUseCase) GetUserId(ctx context.Context, token auth.AccessToken,
+) (int64, error) {
 	claims, err := uc.tokens.ParseToken(token, &userIdClaims{})
 	if err != nil {
 		return 0, errors.Wrap(err, 0)

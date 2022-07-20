@@ -26,7 +26,8 @@ func NewUserRepository(db *sql.DB) *UserRepository {
 	}
 }
 
-func (r *UserRepository) CreateUser(ctx context.Context, user *core.User) error {
+func (r *UserRepository) CreateUser(ctx context.Context, user *core.User,
+) error {
 	query := fmt.Sprintf(`
 INSERT INTO %s (name, password)
 VALUES (:name, :password);
@@ -38,7 +39,8 @@ VALUES (:name, :password);
 	return nil
 }
 
-func (r *UserRepository) GetUserById(ctx context.Context, id int64) (*core.User, error) {
+func (r *UserRepository) GetUserById(ctx context.Context, id int64,
+) (*core.User, error) {
 	user := new(core.User)
 	query := fmt.Sprintf(`
 SELECT %s FROM %s
@@ -52,7 +54,8 @@ LIMIT 1;
 	return user, nil
 }
 
-func (r *UserRepository) GetUserByName(ctx context.Context, name string) (*core.User, error) {
+func (r *UserRepository) GetUserByName(ctx context.Context, name string,
+) (*core.User, error) {
 	user := new(core.User)
 	query := fmt.Sprintf(`
 SELECT %s FROM %s
@@ -66,7 +69,8 @@ LIMIT 1;
 	return user, nil
 }
 
-func (r *UserRepository) UpdateUserCount(ctx context.Context, user *core.User) error {
+func (r *UserRepository) UpdateUserCount(ctx context.Context, user *core.User,
+) error {
 	query := fmt.Sprintf(`
 UPDATE %s
 SET count = :count

@@ -27,7 +27,8 @@ func NewGreeterService(greeterUseCase GreeterUseCase) *GreeterService {
 	}
 }
 
-func (s *GreeterService) Greet(ctx context.Context, req *v1.GreetRequest) (*v1.GreetResponse, error) {
+func (s *GreeterService) Greet(ctx context.Context, req *v1.GreetRequest,
+) (*v1.GreetResponse, error) {
 	userId, ok := ctx.Value(core.UserIdKey).(int64)
 	if !ok {
 		return nil, errors.ContextHasNoValue("user id", 0)

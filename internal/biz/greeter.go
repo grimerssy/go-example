@@ -21,7 +21,8 @@ func NewGreeterUseCase(userRepository UserRepository) *GreeterUseCase {
 	}
 }
 
-func (uc *GreeterUseCase) Greet(ctx context.Context, userId int64) (string, error) {
+func (uc *GreeterUseCase) Greet(ctx context.Context, userId int64,
+) (string, error) {
 	user, err := uc.users.GetUserById(ctx, userId)
 	if err != nil {
 		return "", errors.Wrap(err, 0)

@@ -29,8 +29,8 @@ func NewAuthService(authUseCase AuthUseCase) *AuthService {
 	}
 }
 
-func (s *AuthService) Signup(ctx context.Context,
-	req *v1.SignupRequest) (*v1.SignupResponse, error) {
+func (s *AuthService) Signup(ctx context.Context, req *v1.SignupRequest,
+) (*v1.SignupResponse, error) {
 	user := &core.User{
 		Name:     req.GetName(),
 		Password: req.GetPassword(),
@@ -42,8 +42,8 @@ func (s *AuthService) Signup(ctx context.Context,
 	return &v1.SignupResponse{}, nil
 }
 
-func (s *AuthService) Login(ctx context.Context,
-	req *v1.LoginRequest) (*v1.LoginResponse, error) {
+func (s *AuthService) Login(ctx context.Context, req *v1.LoginRequest,
+) (*v1.LoginResponse, error) {
 	user := &core.User{
 		Name:     req.GetName(),
 		Password: req.GetPassword(),
