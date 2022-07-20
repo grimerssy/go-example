@@ -4,12 +4,9 @@ import (
 	"regexp"
 )
 
-const (
-	skipAuthRegex = `^/v\d+.AuthService/.+`
-)
-
 func shouldSkip(method string) bool {
+	const skipRegex = `^/v\d+.AuthService/.+`
 	return regexp.
-		MustCompile(skipAuthRegex).
+		MustCompile(skipRegex).
 		MatchString(method)
 }
