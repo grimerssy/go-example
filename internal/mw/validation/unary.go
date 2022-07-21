@@ -21,7 +21,7 @@ func UnaryServerInterceptor() grpc.UnaryServerInterceptor {
 
 func validate(req interface{}) error {
 	switch v := req.(type) {
-	case validator:
+	case Validator:
 		return v.Validate()
 	default:
 		return nil

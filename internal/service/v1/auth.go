@@ -10,7 +10,7 @@ import (
 	"github.com/grimerssy/go-example/pkg/errors"
 )
 
-//go:generate mockery --name=AuthUseCase --with-expecter
+//go:generate mockery --name=AuthUseCase --with-expecter --quiet
 type AuthUseCase interface {
 	Signup(ctx context.Context, user *core.User) error
 	Login(ctx context.Context, input *core.User) (auth.Tokens, error)

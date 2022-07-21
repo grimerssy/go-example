@@ -9,7 +9,7 @@ import (
 	"github.com/grimerssy/go-example/pkg/errors"
 )
 
-//go:generate mockery --name=GreeterUseCase --with-expecter
+//go:generate mockery --name=GreeterUseCase --with-expecter --quiet
 type GreeterUseCase interface {
 	Greet(ctx context.Context, userId int64) (string, error)
 }

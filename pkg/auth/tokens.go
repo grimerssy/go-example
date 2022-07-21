@@ -1,11 +1,11 @@
 package auth
 
-//go:generate mockery --name=Tokens --with-expecter
+//go:generate mockery --name=Tokens --with-expecter --quiet
 type Tokens interface {
 	AccessToken
 }
 
-//go:generate mockery --name=AccessToken --with-expecter
+//go:generate mockery --name=AccessToken --with-expecter --quiet
 type AccessToken interface {
 	AccessToken() string
 }
