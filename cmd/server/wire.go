@@ -9,6 +9,6 @@ import (
 	"github.com/grimerssy/go-example/internal/server"
 )
 
-func initializeServer(env core.Environment) *server.Server {
+func initializeServer(env core.Environment) (*server.Server, func()) {
 	panic(wire.Build(withBind))
 }

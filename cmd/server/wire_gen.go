@@ -23,7 +23,7 @@ import (
 
 // Injectors from wire.go:
 
-func initializeServer(env core.Environment) *server.Server {
+func initializeServer(env core.Environment) (*server.Server, func()) {
 	config := configs.NewConfig(env)
 	configServer := config.Server
 	configMW := config.MW
@@ -34,7 +34,7 @@ func initializeServer(env core.Environment) *server.Server {
 	configBcrypt := config.Bcrypt
 	bcrypt := hash.NewBcrypt(configBcrypt)
 	configDB := config.DB
-	db := database.NewPostgres(configDB)
+	db, cleanup := database.NewPostgres(configDB)
 	userRepository := data.NewUserRepository(db)
 	authUseCase := biz.NewAuthUseCase(jwt, optimus, bcrypt, userRepository)
 	configZap := config.Zap
@@ -49,5 +49,7 @@ func initializeServer(env core.Environment) *server.Server {
 	grpcServer := server.NewGrpcServer(v3, v4)
 	handler := server.NewHttpHandler(configServer)
 	serverServer := server.NewServer(configServer, grpcServer, handler)
-	return serverServer
+	return serverServer, func() {
+		cleanup()
+	}
 }
