@@ -32,18 +32,7 @@ gen:
 test:
 	ginkgo -r --cover
 
-.PHONY: run
-# run the server
-run:
-	make build; \
-	make exe
-
 .PHONY: build
 # compile server application
 build:
 	go build -o ./bin/server ./cmd/server/main.go
-
-.PHONY: exe
-# execute server binary
-exe:
-	./bin/server
