@@ -9,6 +9,7 @@ package main
 import (
 	"github.com/grimerssy/go-example/configs"
 	"github.com/grimerssy/go-example/internal/biz"
+	"github.com/grimerssy/go-example/internal/core"
 	"github.com/grimerssy/go-example/internal/data"
 	"github.com/grimerssy/go-example/internal/mw"
 	"github.com/grimerssy/go-example/internal/server"
@@ -22,8 +23,8 @@ import (
 
 // Injectors from wire.go:
 
-func InitializeServer(file string) *server.Server {
-	config := configs.NewConfig(file)
+func initializeServer(env core.Environment) *server.Server {
+	config := configs.NewConfig(env)
 	configServer := config.Server
 	configMW := config.MW
 	configJWT := config.JWT

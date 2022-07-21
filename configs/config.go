@@ -1,6 +1,7 @@
 package configs
 
 import (
+	"github.com/grimerssy/go-example/internal/core"
 	"github.com/grimerssy/go-example/internal/mw"
 	"github.com/grimerssy/go-example/internal/server"
 	"github.com/grimerssy/go-example/pkg/auth"
@@ -20,6 +21,6 @@ type Config struct {
 	Zap     log.ConfigZap
 }
 
-func NewConfig(file string) *Config {
+func NewConfig(env core.Environment) *Config {
 	return &Config{}
 }
