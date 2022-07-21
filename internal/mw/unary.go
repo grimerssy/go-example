@@ -7,7 +7,7 @@ import (
 	"google.golang.org/grpc"
 )
 
-func NewUnaryServerInterceptors(tp auth.TokenParser, l log.Logger, cfg ConfigMW,
+func NewUnaryServerInterceptors(cfg ConfigMW, tp auth.TokenParser, l log.Logger,
 ) []grpc.UnaryServerInterceptor {
 	return []grpc.UnaryServerInterceptor{
 		validation.UnaryServerInterceptor(),

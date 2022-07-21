@@ -5,7 +5,7 @@ import (
 	"reflect"
 )
 
-type Config struct {
+type ConfigDB struct {
 	Host     string
 	Port     int
 	Username string

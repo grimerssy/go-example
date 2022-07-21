@@ -5,7 +5,7 @@ import (
 	"fmt"
 )
 
-func NewPostgres(cfg Config) *sql.DB {
+func NewPostgres(cfg ConfigDB) *sql.DB {
 	db := mustOpen("postgres",
 		fmt.Sprintf("postgresql://%s:%s@%s:%d/%s?sslmode=%s",
 			cfg.Username, cfg.Password, cfg.Host, cfg.Port, cfg.DB, cfg.SSLMode))

@@ -4,6 +4,6 @@ import (
 	"google.golang.org/grpc"
 )
 
-func NewStreamServerInterceptors() []grpc.UnaryServerInterceptor {
-	return []grpc.UnaryServerInterceptor{}
+func NewStreamServerInterceptors() []grpc.StreamServerInterceptor {
+	return []grpc.StreamServerInterceptor{}
 }
