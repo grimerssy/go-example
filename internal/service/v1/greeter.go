@@ -6,7 +6,7 @@ import (
 
 	v1 "github.com/grimerssy/go-example/internal/api/v1"
 	"github.com/grimerssy/go-example/internal/core"
-	"github.com/grimerssy/go-example/pkg/errors"
+	"github.com/grimerssy/go-example/pkg/grpc_err"
 )
 
 //go:generate mockery --name=GreeterUseCase --with-expecter --quiet
@@ -31,11 +31,11 @@ func (s *GreeterService) Greet(ctx context.Context, req *v1.GreetRequest,
 ) (*v1.GreetResponse, error) {
 	userId, ok := ctx.Value(core.UserIdKey).(int64)
 	if !ok {
-		return nil, errors.ContextHasNoValue("user id", 0)
+		return nil, grpc_err.ContextHasNoValue("user id", 0)
 	}
 	message, err := s.uc.Greet(ctx, userId)
 	if err != nil {
-		return nil, errors.Wrap(err, 0)
+		return nil, grpc_err.Wrap(err, 0)
 	}
 	res := &v1.GreetResponse{
 		Message: message,

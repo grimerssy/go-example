@@ -1,4 +1,4 @@
-package errors
+package grpc_err
 
 import (
 	"fmt"

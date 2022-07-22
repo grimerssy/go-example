@@ -3,7 +3,7 @@ package data
 import (
 	"testing"
 
-	"github.com/grimerssy/go-example/pkg/errors"
+	"github.com/grimerssy/go-example/pkg/grpc_err"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 )
@@ -14,6 +14,6 @@ func TestRepositories(t *testing.T) {
 }
 
 var (
-	errUserAlreadyExists = errors.AlreadyExists("user", 0)
-	errUserNotFound      = errors.NotFound("user", 0)
+	errUserAlreadyExists = grpc_err.AlreadyExists("user", 0)
+	errUserNotFound      = grpc_err.NotFound("user", 0)
 )

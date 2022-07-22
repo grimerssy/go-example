@@ -9,7 +9,7 @@ import (
 
 	"github.com/grimerssy/go-example/internal/core"
 	"github.com/grimerssy/go-example/pkg/database"
-	"github.com/grimerssy/go-example/pkg/errors"
+	"github.com/grimerssy/go-example/pkg/grpc_err"
 	"github.com/jmoiron/sqlx"
 )
 
@@ -34,7 +34,7 @@ VALUES (:name, :password);
 `, core.UserTable)
 	_, err := r.db.NamedExecContext(ctx, query, user)
 	if err != nil {
-		return errors.AlreadyExists("user", 0)
+		return grpc_err.AlreadyExists("user", 0)
 	}
 	return nil
 }
@@ -49,7 +49,7 @@ LIMIT 1;
 `, strings.Join(core.UserRowNames, ", "), core.UserTable)
 	err := r.db.GetContext(ctx, user, query, id)
 	if err != nil {
-		return nil, errors.NotFound("user", 0)
+		return nil, grpc_err.NotFound("user", 0)
 	}
 	return user, nil
 }
@@ -64,7 +64,7 @@ LIMIT 1;
 `, strings.Join(core.UserRowNames, ", "), core.UserTable)
 	err := r.db.GetContext(ctx, user, query, name)
 	if err != nil {
-		return nil, errors.NotFound("user", 0)
+		return nil, grpc_err.NotFound("user", 0)
 	}
 	return user, nil
 }
@@ -78,7 +78,7 @@ WHERE id = :id
 `, core.UserTable)
 	_, err := r.db.NamedExecContext(ctx, query, user)
 	if err != nil {
-		return errors.Wrap(err, 0)
+		return grpc_err.Wrap(err, 0)
 	}
 	return nil
 }

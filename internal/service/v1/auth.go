@@ -7,7 +7,7 @@ import (
 	"github.com/grimerssy/go-example/internal/api/v1"
 	"github.com/grimerssy/go-example/internal/core"
 	"github.com/grimerssy/go-example/pkg/auth"
-	"github.com/grimerssy/go-example/pkg/errors"
+	"github.com/grimerssy/go-example/pkg/grpc_err"
 )
 
 //go:generate mockery --name=AuthUseCase --with-expecter --quiet
@@ -37,7 +37,7 @@ func (s *AuthService) Signup(ctx context.Context, req *v1.SignupRequest,
 	}
 	err := s.uc.Signup(ctx, user)
 	if err != nil {
-		return nil, errors.Wrap(err, 0)
+		return nil, grpc_err.Wrap(err, 0)
 	}
 	return &v1.SignupResponse{}, nil
 }
@@ -50,7 +50,7 @@ func (s *AuthService) Login(ctx context.Context, req *v1.LoginRequest,
 	}
 	tokens, err := s.uc.Login(ctx, user)
 	if err != nil {
-		return nil, errors.Wrap(err, 0)
+		return nil, grpc_err.Wrap(err, 0)
 	}
 	res := &v1.LoginResponse{
 		AccessToken: tokens.AccessToken(),
