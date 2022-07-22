@@ -1,5 +1,9 @@
 package log
 
+import (
+	"strings"
+)
+
 type Level int
 
 const (
@@ -20,5 +24,5 @@ func getLevel(lvl string) Level {
 		"FATAL": Fatal,
 		"PANIC": Panic,
 	}
-	return m[lvl]
+	return m[strings.ToUpper(lvl)]
 }
