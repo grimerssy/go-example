@@ -1,0 +1,24 @@
+server:
+  shutdownSeconds: 5
+  host: localhost
+  port: 8080
+mw:
+  authScheme: Bearer
+jwt:
+  accessTokenMinutes: 5
+db:
+  host: localhost
+  port: 5432
+  db: postrges
+  sslMode: disable
+bcrypt:
+  cost: 12
+optimus:
+  prime: 680830568250471799
+  random: 4675836005689841249
+zap:
+  isDevelopment: true
+  level: debug
+  encoding: console
+  outputPaths:
+    - stderr
