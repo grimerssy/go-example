@@ -19,7 +19,7 @@ func main() {
 
 	go func() {
 		err := server.Run()
-		if err != nil && !errors.Is(err, http.ErrServerClosed) {
+		if !errors.Is(err, http.ErrServerClosed) {
 			panic(err)
 		}
 	}()
