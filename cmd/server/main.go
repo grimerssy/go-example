@@ -9,6 +9,7 @@ import (
 	"syscall"
 
 	"github.com/grimerssy/go-example/internal/core"
+	_ "github.com/lib/pq"
 )
 
 func main() {

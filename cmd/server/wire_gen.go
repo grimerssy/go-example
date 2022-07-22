@@ -21,6 +21,10 @@ import (
 	"github.com/grimerssy/go-example/pkg/log"
 )
 
+import (
+	_ "github.com/lib/pq"
+)
+
 // Injectors from wire.go:
 
 func initializeServer(env core.Environment) (*server.Server, func()) {
