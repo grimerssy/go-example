@@ -51,7 +51,8 @@ func initializeServer(env core.Environment) (*server.Server, func()) {
 	greeterService := v1.NewGreeterService(greeterUseCase)
 	v4 := server.NewRegisterServicesFunc(authService, greeterService)
 	grpcServer := server.NewGrpcServer(v3, v4)
-	handler := server.NewHttpHandler(configServer)
+	v5 := server.NewGrpcDialOptions()
+	handler := server.NewHttpHandler(configServer, v5)
 	serverServer := server.NewServer(configServer, grpcServer, handler)
 	return serverServer, func() {
 		cleanup()

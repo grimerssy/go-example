@@ -23,6 +23,12 @@ func NewGrpcServerOptions(unaryInts []grpc.UnaryServerInterceptor,
 	}
 }
 
+func NewGrpcDialOptions() []grpc.DialOption {
+	return []grpc.DialOption{
+		grpc.WithTransportCredentials(insecure.NewCredentials()),
+	}
+}
+
 func NewRegisterServicesFunc(
 	v1Auth v1.AuthServiceServer,
 	v1Greeter v1.GreeterServiceServer,

@@ -10,4 +10,5 @@ var ProvideServer = wire.NewSet(
 	NewGrpcServerOptions,
 	NewRegisterServicesFunc,
 	NewHttpHandler,
+	NewGrpcDialOptions,
 )

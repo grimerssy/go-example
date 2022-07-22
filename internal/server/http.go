@@ -10,10 +10,10 @@ import (
 	"google.golang.org/grpc"
 )
 
-func NewHttpHandler(cfg ConfigServer) http.Handler {
+func NewHttpHandler(cfg ConfigServer, dopts []grpc.DialOption) http.Handler {
 	mux := http.NewServeMux()
 	ep := fmt.Sprintf("%s:%d", cfg.Host, cfg.Port)
-	gw := getGatewayHandler(ep, []grpc.DialOption{})
+	gw := getGatewayHandler(ep, dopts)
 
 	mux.Handle("/", gw)
 	return mux
