@@ -9,25 +9,25 @@ import (
 )
 
 type ConfigJWT struct {
-	TokenMinutes  time.Duration
-	SigningString string
+	AccessTokenMinutes time.Duration
+	SigningString      string
 }
 
 type JWT struct {
-	tokenTTL      time.Duration
-	signingString string
+	accessTokenTTL time.Duration
+	signingString  string
 }
 
 func NewJWT(cfg ConfigJWT) *JWT {
 	return &JWT{
-		tokenTTL:      cfg.TokenMinutes * time.Minute,
-		signingString: cfg.SigningString,
+		accessTokenTTL: cfg.AccessTokenMinutes * time.Minute,
+		signingString:  cfg.SigningString,
 	}
 }
 
 func (j *JWT) DefaultClaims() Claims {
 	return jwt.StandardClaims{
-		ExpiresAt: time.Now().Add(j.tokenTTL).Unix(),
+		ExpiresAt: time.Now().Add(j.accessTokenTTL).Unix(),
 		IssuedAt:  time.Now().Unix(),
 	}
 }
