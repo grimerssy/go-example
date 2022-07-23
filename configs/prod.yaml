@@ -19,6 +19,7 @@ optimus:
 zap:
   isDevelopment: true
   level: debug
+  disableCaller: true
   encoding: console
   outputPaths:
     - stderr
