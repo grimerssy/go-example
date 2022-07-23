@@ -57,10 +57,10 @@ func (m *SignupRequest) validate(all bool) error {
 
 	var errors []error
 
-	if l := utf8.RuneCountInString(m.GetName()); l < 3 || l > 50 {
+	if l := utf8.RuneCountInString(m.GetName()); l < 3 || l > 64 {
 		err := SignupRequestValidationError{
 			field:  "Name",
-			reason: "value length must be between 3 and 50 runes, inclusive",
+			reason: "value length must be between 3 and 64 runes, inclusive",
 		}
 		if !all {
 			return err
