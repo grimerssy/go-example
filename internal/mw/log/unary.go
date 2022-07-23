@@ -2,6 +2,7 @@ package log
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/grimerssy/go-example/pkg/log"
 	"google.golang.org/grpc"
@@ -17,7 +18,10 @@ func UnaryServerInterceptor(logger Logger) grpc.UnaryServerInterceptor {
 		duration := stopTimer()
 		code := status.Code(err)
 		lvl := getLogLevel(code)
-		msg := err.Error()
+		msg := "OK"
+		if err != nil {
+			msg = err.Error()
+		}
 		fields := []log.Field{
 			logger.WithString("gRPC-code", code.String()),
 			logger.WithDuration("time-taken", duration),
@@ -26,7 +30,7 @@ func UnaryServerInterceptor(logger Logger) grpc.UnaryServerInterceptor {
 		if len(callers) != 0 {
 			fields = append(fields, logger.WithStrings("callers", callers))
 		}
-		logger.Log(lvl, msg, fields...)
+		logger.Log(lvl, fmt.Sprintf("%s: %s", info.FullMethod, msg), fields...)
 		return res, err
 	}
 }
