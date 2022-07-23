@@ -7,6 +7,8 @@ import (
 	"strings"
 	"time"
 
+	"golang.org/x/net/http2"
+	"golang.org/x/net/http2/h2c"
 	"google.golang.org/grpc"
 )
 
@@ -43,12 +45,15 @@ func (s *Server) Shutdown() error {
 }
 
 func handleGrpc(srv *grpc.Server, handler http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if r.ProtoMajor == 2 &&
-			strings.Contains(r.Header.Get("Content-Type"), "application/grpc") {
-			srv.ServeHTTP(w, r)
-		} else {
-			handler.ServeHTTP(w, r)
-		}
-	})
+	return h2c.NewHandler(
+		http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			if r.ProtoMajor == 2 &&
+				strings.Contains(r.Header.Get("Content-Type"), "application/grpc") {
+				srv.ServeHTTP(w, r)
+			} else {
+				handler.ServeHTTP(w, r)
+			}
+		}),
+		&http2.Server{},
+	)
 }
