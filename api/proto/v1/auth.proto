@@ -20,12 +20,14 @@ service AuthService {
   rpc Signup(SignupRequest) returns (SignupResponse) {
     option (google.api.http) = {
       post: "/v1/signup"
+      body: "*"
     };
   }
 
   rpc Login(LoginRequest) returns (LoginResponse) {
     option (google.api.http) = {
       post: "/v1/login"
+      body: "*"
     };
   }
 }
