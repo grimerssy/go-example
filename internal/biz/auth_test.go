@@ -3,6 +3,7 @@ package biz
 import (
 	"context"
 	"errors"
+	"fmt"
 
 	"github.com/grimerssy/go-example/internal/biz/mocks"
 	"github.com/grimerssy/go-example/internal/core"
@@ -245,15 +246,12 @@ var _ = Describe("AuthUseCase", func() {
 					ObfuscateId(user.Id).
 					Return(user.Id, nil)
 			}
-			defaultClaimsCALL = func() {
-				tokenManagerMock.EXPECT().
-					DefaultClaims().
-					Return(authMock.NewClaims(GinkgoT()))
-			}
 			generateTokensOK = func() {
+				claims := map[string]string{
+					core.UserIdKey: fmt.Sprintf("%v", user.Id),
+				}
 				tokenManagerMock.EXPECT().
-					GenerateTokens(newUserIdClaims(tokenManagerMock.
-						DefaultClaims(), user.Id)).
+					GenerateTokens(claims).
 					Return(authMock.NewTokens(GinkgoT()), nil)
 			}
 		)
@@ -343,11 +341,11 @@ var _ = Describe("AuthUseCase", func() {
 				getUserByNameOK()
 				isPasswordEqualToHashOK()
 				obfuscateIdOK()
-				defaultClaimsCALL()
 
 				tokenManagerMock.EXPECT().
-					GenerateTokens(newUserIdClaims(tokenManagerMock.
-						DefaultClaims(), user.Id)).
+					GenerateTokens(map[string]string{
+						core.UserIdKey: fmt.Sprintf("%v", user.Id),
+					}).
 					Return(nil, errors.New(""))
 			})
 
@@ -364,7 +362,6 @@ var _ = Describe("AuthUseCase", func() {
 				getUserByNameOK()
 				isPasswordEqualToHashOK()
 				obfuscateIdOK()
-				defaultClaimsCALL()
 				generateTokensOK()
 			})
 
@@ -386,10 +383,11 @@ var _ = Describe("AuthUseCase", func() {
 			err    error
 
 			parseTokensOK = func() {
-				claimsBase := authMock.NewClaims(GinkgoT())
-				claims := newUserIdClaims(claimsBase, userId)
+				claims := map[string]string{
+					core.UserIdKey: fmt.Sprintf("%v", userId),
+				}
 				tokenManagerMock.EXPECT().
-					ParseToken(token, &userIdClaims{}).
+					ParseToken(token).
 					Return(claims, nil)
 			}
 			deobfuscateIdOK = func() {
@@ -411,7 +409,7 @@ var _ = Describe("AuthUseCase", func() {
 		When("token parsing fails", func() {
 			BeforeEach(func() {
 				tokenManagerMock.EXPECT().
-					ParseToken(token, &userIdClaims{}).
+					ParseToken(token).
 					Return(nil, errors.New(""))
 			})
 

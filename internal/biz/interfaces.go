@@ -9,9 +9,8 @@ import (
 
 //go:generate mockery --name=TokenManager --with-expecter --quiet
 type TokenManager interface {
-	DefaultClaims() auth.Claims
-	GenerateTokens(claims auth.Claims) (auth.Tokens, error)
-	ParseToken(token auth.AccessToken, claims auth.Claims) (auth.Claims, error)
+	GenerateTokens(claims map[string]string) (auth.Tokens, error)
+	ParseToken(token auth.AccessToken) (map[string]string, error)
 }
 
 //go:generate mockery --name=IdObfuscator --with-expecter --quiet

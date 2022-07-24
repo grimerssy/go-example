@@ -2,7 +2,9 @@ package biz
 
 import (
 	"context"
+	"fmt"
 	"reflect"
+	"strconv"
 
 	"github.com/grimerssy/go-example/internal/core"
 	"github.com/grimerssy/go-example/pkg/auth"
@@ -66,7 +68,9 @@ func (uc *AuthUseCase) Login(ctx context.Context, input *core.User,
 	if err != nil {
 		return nil, grpc_err.Wrap(err, 0)
 	}
-	claims := newUserIdClaims(uc.tokens.DefaultClaims(), obfuscatedId)
+	claims := map[string]string{
+		core.UserIdKey: fmt.Sprintf("%v", obfuscatedId),
+	}
 	tokens, err := uc.tokens.GenerateTokens(claims)
 	if err != nil {
 		return nil, grpc_err.Wrap(err, 0)
@@ -76,12 +80,14 @@ func (uc *AuthUseCase) Login(ctx context.Context, input *core.User,
 
 func (uc *AuthUseCase) GetUserId(ctx context.Context, token auth.AccessToken,
 ) (int64, error) {
-	claims, err := uc.tokens.ParseToken(token, &userIdClaims{})
+	claims, err := uc.tokens.ParseToken(token)
 	if err != nil {
 		return 0, grpc_err.Wrap(err, 0)
 	}
-	userIdClaims := claims.(*userIdClaims)
-	obfuscatedId := userIdClaims.UserId
+	obfuscatedId, err := strconv.ParseInt(claims[core.UserIdKey], 10, 64)
+	if err != nil {
+		return 0, grpc_err.Wrap(err, 0)
+	}
 	userId, err := uc.ids.DeobfuscateId(obfuscatedId)
 	if err != nil {
 		return 0, grpc_err.Wrap(err, 0)
