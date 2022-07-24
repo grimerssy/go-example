@@ -20,6 +20,7 @@ zap:
   isDevelopment: true
   level: debug
   disableCaller: true
+  disableStacktrace: true
   encoding: console
   outputPaths:
     - stderr
