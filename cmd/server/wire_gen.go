@@ -22,7 +22,11 @@ import (
 )
 
 import (
+	_ "github.com/google/subcommands"
 	_ "github.com/lib/pq"
+	_ "golang.org/x/tools/go/ast/astutil"
+	_ "golang.org/x/tools/go/packages"
+	_ "golang.org/x/tools/go/types/typeutil"
 )
 
 // Injectors from wire.go:
