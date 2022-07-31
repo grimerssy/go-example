@@ -9,7 +9,7 @@ import (
 	"github.com/grimerssy/go-example/pkg/grpc_err"
 )
 
-//go:generate mockery --name=GreeterUseCase --with-expecter --quiet
+//go:generate mockgen -source=greeter.go -destination=greeter_mock.go -package=v1 -mock_names=GreeterUseCase=greeterUseCaseMock
 type GreeterUseCase interface {
 	Greet(ctx context.Context, userId int64) (string, error)
 }

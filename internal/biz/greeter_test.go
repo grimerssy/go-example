@@ -4,7 +4,7 @@ import (
 	"context"
 	"errors"
 
-	"github.com/grimerssy/go-example/internal/biz/mocks"
+	"github.com/golang/mock/gomock"
 	"github.com/grimerssy/go-example/internal/core"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
@@ -14,10 +14,15 @@ var _ = Describe("NewGreeterUseCase", func() {
 	var (
 		guc *GreeterUseCase
 
-		userRepositoryMock *mocks.UserRepository
+		ctrl               *gomock.Controller
+		userRepositoryMock *userRepositoryMock
 
 		test func()
 	)
+
+	BeforeEach(func() {
+		ctrl = gomock.NewController(GinkgoT())
+	})
 
 	JustBeforeEach(func() {
 		test = func() {
@@ -40,7 +45,7 @@ var _ = Describe("NewGreeterUseCase", func() {
 
 	When("userRepository is not nil", func() {
 		BeforeEach(func() {
-			userRepositoryMock = mocks.NewUserRepository(GinkgoT())
+			userRepositoryMock = NewuserRepositoryMock(ctrl)
 		})
 
 		It("does not panic", func() {
@@ -56,11 +61,13 @@ var _ = Describe("GreeterUseCase", func() {
 	var (
 		guc *GreeterUseCase
 
-		userRepositoryMock *mocks.UserRepository
+		ctrl               *gomock.Controller
+		userRepositoryMock *userRepositoryMock
 	)
 
 	BeforeEach(func() {
-		userRepositoryMock = mocks.NewUserRepository(GinkgoT())
+		ctrl = gomock.NewController(GinkgoT())
+		userRepositoryMock = NewuserRepositoryMock(ctrl)
 		guc = NewGreeterUseCase(userRepositoryMock)
 	})
 

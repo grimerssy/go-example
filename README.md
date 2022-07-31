@@ -42,7 +42,7 @@ end user
 - [sqlx](https://github.com/jmoiron/sqlx) - better SQL experience
 - [ginkgo](https://github.com/onsi/ginkgo) and 
 [gomega](https://github.com/onsi/gomega) - BDD testing
-- [mockery](https://github.com/vektra/mockery) and
+- [gomock](https://github.com/golang/mock) and
 [go-sqlmock](https://github.com/DATA-DOG/go-sqlmock) - mocking dependencies 
   for testing
 

@@ -4,9 +4,9 @@ import (
 	"context"
 	"errors"
 
+	"github.com/golang/mock/gomock"
 	v1 "github.com/grimerssy/go-example/internal/api/v1"
 	"github.com/grimerssy/go-example/internal/core"
-	"github.com/grimerssy/go-example/internal/service/v1/mocks"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 	"google.golang.org/grpc/codes"
@@ -16,10 +16,15 @@ var _ = Describe("NewGreeterService", func() {
 	var (
 		gs *GreeterService
 
-		greeterUseCaseMock *mocks.GreeterUseCase
+		ctrl               *gomock.Controller
+		greeterUseCaseMock *greeterUseCaseMock
 
 		test func()
 	)
+
+	BeforeEach(func() {
+		ctrl = gomock.NewController(GinkgoT())
+	})
 
 	JustBeforeEach(func() {
 		test = func() {
@@ -42,7 +47,7 @@ var _ = Describe("NewGreeterService", func() {
 
 	When("greeterUseCaseMock is not nil", func() {
 		BeforeEach(func() {
-			greeterUseCaseMock = mocks.NewGreeterUseCase(GinkgoT())
+			greeterUseCaseMock = NewgreeterUseCaseMock(ctrl)
 		})
 
 		It("does not panic", func() {
@@ -58,11 +63,13 @@ var _ = Describe("GreeterService", func() {
 	var (
 		gs *GreeterService
 
-		greeterUseCaseMock *mocks.GreeterUseCase
+		ctrl               *gomock.Controller
+		greeterUseCaseMock *greeterUseCaseMock
 	)
 
 	BeforeEach(func() {
-		greeterUseCaseMock = mocks.NewGreeterUseCase(GinkgoT())
+		ctrl = gomock.NewController(GinkgoT())
+		greeterUseCaseMock = NewgreeterUseCaseMock(ctrl)
 		gs = NewGreeterService(greeterUseCaseMock)
 	})
 

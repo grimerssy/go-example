@@ -25,7 +25,7 @@ func NewJWT(cfg ConfigJWT) *JWT {
 	}
 }
 
-func (j *JWT) GenerateTokens(claims map[string]string) (Tokens, error) {
+func (j *JWT) GenerateToken(claims map[string]string) (Token, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, j.toClaims(claims))
 	accessToken, err := token.SignedString([]byte(j.signingString))
 	if err != nil {

@@ -10,10 +10,10 @@ import (
 	"github.com/grimerssy/go-example/pkg/grpc_err"
 )
 
-//go:generate mockery --name=AuthUseCase --with-expecter --quiet
+//go:generate mockgen -source=auth.go -destination=auth_mock.go -package=v1 -mock_names=AuthUseCase=authUseCaseMock
 type AuthUseCase interface {
 	Signup(ctx context.Context, user *core.User) error
-	Login(ctx context.Context, input *core.User) (auth.Tokens, error)
+	Login(ctx context.Context, input *core.User) (auth.Token, error)
 }
 
 type AuthService struct {

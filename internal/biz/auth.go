@@ -56,7 +56,7 @@ func (uc *AuthUseCase) Signup(ctx context.Context, user *core.User) error {
 }
 
 func (uc *AuthUseCase) Login(ctx context.Context, input *core.User,
-) (auth.Tokens, error) {
+) (auth.Token, error) {
 	user, err := uc.users.GetUserByName(ctx, input.Name)
 	if err != nil {
 		return nil, grpc_err.Wrap(err, 0)
@@ -71,11 +71,11 @@ func (uc *AuthUseCase) Login(ctx context.Context, input *core.User,
 	claims := map[string]string{
 		core.UserIdKey: fmt.Sprintf("%v", obfuscatedId),
 	}
-	tokens, err := uc.tokens.GenerateTokens(claims)
+	token, err := uc.tokens.GenerateToken(claims)
 	if err != nil {
 		return nil, grpc_err.Wrap(err, 0)
 	}
-	return tokens, nil
+	return token, nil
 }
 
 func (uc *AuthUseCase) GetUserId(ctx context.Context, token auth.AccessToken,

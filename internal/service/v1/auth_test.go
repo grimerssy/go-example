@@ -4,10 +4,10 @@ import (
 	"context"
 	"errors"
 
+	"github.com/golang/mock/gomock"
 	v1 "github.com/grimerssy/go-example/internal/api/v1"
 	"github.com/grimerssy/go-example/internal/core"
-	"github.com/grimerssy/go-example/internal/service/v1/mocks"
-	authMocks "github.com/grimerssy/go-example/pkg/auth/mocks"
+	"github.com/grimerssy/go-example/pkg/auth"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 	"google.golang.org/grpc/codes"
@@ -17,10 +17,15 @@ var _ = Describe("NewAuthService", func() {
 	var (
 		as *AuthService
 
-		authUseCaseMock *mocks.AuthUseCase
+		ctrl            *gomock.Controller
+		authUseCaseMock *authUseCaseMock
 
 		test func()
 	)
+
+	BeforeEach(func() {
+		ctrl = gomock.NewController(GinkgoT())
+	})
 
 	JustBeforeEach(func() {
 		test = func() {
@@ -43,7 +48,7 @@ var _ = Describe("NewAuthService", func() {
 
 	When("authUseCase is not nil", func() {
 		BeforeEach(func() {
-			authUseCaseMock = mocks.NewAuthUseCase(GinkgoT())
+			authUseCaseMock = NewauthUseCaseMock(ctrl)
 		})
 
 		It("does not panic", func() {
@@ -57,13 +62,14 @@ var _ = Describe("NewAuthService", func() {
 
 var _ = Describe("AuthService", func() {
 	var (
-		as *AuthService
-
-		authUseCaseMock *mocks.AuthUseCase
+		as              *AuthService
+		ctrl            *gomock.Controller
+		authUseCaseMock *authUseCaseMock
 	)
 
 	BeforeEach(func() {
-		authUseCaseMock = mocks.NewAuthUseCase(GinkgoT())
+		ctrl = gomock.NewController(GinkgoT())
+		authUseCaseMock = NewauthUseCaseMock(ctrl)
 		as = NewAuthService(authUseCaseMock)
 	})
 
@@ -234,14 +240,14 @@ var _ = Describe("AuthService", func() {
 
 		When("no errors are met", func() {
 			BeforeEach(func() {
-				tokensMock := authMocks.NewTokens(GinkgoT())
-				tokensMock.EXPECT().
+				tokenMock := auth.NewtokenMock(ctrl)
+				tokenMock.EXPECT().
 					AccessToken().
 					Return("")
 
 				authUseCaseMock.EXPECT().
 					Login(context.Background(), &core.User{}).
-					Return(tokensMock, nil)
+					Return(tokenMock, nil)
 			})
 
 			It("returns non-nil response", func() {

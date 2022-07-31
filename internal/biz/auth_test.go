@@ -5,10 +5,9 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/grimerssy/go-example/internal/biz/mocks"
+	"github.com/golang/mock/gomock"
 	"github.com/grimerssy/go-example/internal/core"
 	"github.com/grimerssy/go-example/pkg/auth"
-	authMock "github.com/grimerssy/go-example/pkg/auth/mocks"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 )
@@ -17,13 +16,18 @@ var _ = Describe("NewAuthUseCase", func() {
 	var (
 		auc *AuthUseCase
 
-		tokenManagerMock   *mocks.TokenManager
-		idObfuscatorMock   *mocks.IdObfuscator
-		passwordHasherMock *mocks.PasswordHasher
-		userRepositoryMock *mocks.UserRepository
+		ctrl               *gomock.Controller
+		tokenManagerMock   *tokenManagerMock
+		idObfuscatorMock   *idObfuscatorMock
+		passwordHasherMock *passwordHasherMock
+		userRepositoryMock *userRepositoryMock
 
 		test func()
 	)
+
+	BeforeEach(func() {
+		ctrl = gomock.NewController(GinkgoT())
+	})
 
 	JustBeforeEach(func() {
 		test = func() {
@@ -39,9 +43,9 @@ var _ = Describe("NewAuthUseCase", func() {
 	When("tokenManager is nil", func() {
 		BeforeEach(func() {
 			tokenManagerMock = nil
-			idObfuscatorMock = mocks.NewIdObfuscator(GinkgoT())
-			passwordHasherMock = mocks.NewPasswordHasher(GinkgoT())
-			userRepositoryMock = mocks.NewUserRepository(GinkgoT())
+			idObfuscatorMock = NewidObfuscatorMock(ctrl)
+			passwordHasherMock = NewpasswordHasherMock(ctrl)
+			userRepositoryMock = NewuserRepositoryMock(ctrl)
 		})
 
 		It("panics", func() {
@@ -54,10 +58,10 @@ var _ = Describe("NewAuthUseCase", func() {
 
 	When("idObfuscator is nil", func() {
 		BeforeEach(func() {
-			tokenManagerMock = mocks.NewTokenManager(GinkgoT())
+			tokenManagerMock = NewtokenManagerMock(ctrl)
 			idObfuscatorMock = nil
-			passwordHasherMock = mocks.NewPasswordHasher(GinkgoT())
-			userRepositoryMock = mocks.NewUserRepository(GinkgoT())
+			passwordHasherMock = NewpasswordHasherMock(ctrl)
+			userRepositoryMock = NewuserRepositoryMock(ctrl)
 		})
 
 		It("panics", func() {
@@ -70,10 +74,10 @@ var _ = Describe("NewAuthUseCase", func() {
 
 	When("passwordHasher is nil", func() {
 		BeforeEach(func() {
-			tokenManagerMock = mocks.NewTokenManager(GinkgoT())
-			idObfuscatorMock = mocks.NewIdObfuscator(GinkgoT())
+			tokenManagerMock = NewtokenManagerMock(ctrl)
+			idObfuscatorMock = NewidObfuscatorMock(ctrl)
 			passwordHasherMock = nil
-			userRepositoryMock = mocks.NewUserRepository(GinkgoT())
+			userRepositoryMock = NewuserRepositoryMock(ctrl)
 		})
 
 		It("panics", func() {
@@ -86,9 +90,9 @@ var _ = Describe("NewAuthUseCase", func() {
 
 	When("userRepository is nil", func() {
 		BeforeEach(func() {
-			tokenManagerMock = mocks.NewTokenManager(GinkgoT())
-			idObfuscatorMock = mocks.NewIdObfuscator(GinkgoT())
-			passwordHasherMock = mocks.NewPasswordHasher(GinkgoT())
+			tokenManagerMock = NewtokenManagerMock(ctrl)
+			idObfuscatorMock = NewidObfuscatorMock(ctrl)
+			passwordHasherMock = NewpasswordHasherMock(ctrl)
 			userRepositoryMock = nil
 		})
 
@@ -102,10 +106,10 @@ var _ = Describe("NewAuthUseCase", func() {
 
 	When("none of the parameters are nil", func() {
 		BeforeEach(func() {
-			tokenManagerMock = mocks.NewTokenManager(GinkgoT())
-			idObfuscatorMock = mocks.NewIdObfuscator(GinkgoT())
-			passwordHasherMock = mocks.NewPasswordHasher(GinkgoT())
-			userRepositoryMock = mocks.NewUserRepository(GinkgoT())
+			tokenManagerMock = NewtokenManagerMock(ctrl)
+			idObfuscatorMock = NewidObfuscatorMock(ctrl)
+			passwordHasherMock = NewpasswordHasherMock(ctrl)
+			userRepositoryMock = NewuserRepositoryMock(ctrl)
 		})
 
 		It("does not panic", func() {
@@ -121,17 +125,19 @@ var _ = Describe("AuthUseCase", func() {
 	var (
 		auc *AuthUseCase
 
-		tokenManagerMock   *mocks.TokenManager
-		idObfuscatorMock   *mocks.IdObfuscator
-		passwordHasherMock *mocks.PasswordHasher
-		userRepositoryMock *mocks.UserRepository
+		ctrl               *gomock.Controller
+		tokenManagerMock   *tokenManagerMock
+		idObfuscatorMock   *idObfuscatorMock
+		passwordHasherMock *passwordHasherMock
+		userRepositoryMock *userRepositoryMock
 	)
 
 	BeforeEach(func() {
-		idObfuscatorMock = mocks.NewIdObfuscator(GinkgoT())
-		tokenManagerMock = mocks.NewTokenManager(GinkgoT())
-		passwordHasherMock = mocks.NewPasswordHasher(GinkgoT())
-		userRepositoryMock = mocks.NewUserRepository(GinkgoT())
+		ctrl = gomock.NewController(GinkgoT())
+		idObfuscatorMock = NewidObfuscatorMock(ctrl)
+		tokenManagerMock = NewtokenManagerMock(ctrl)
+		passwordHasherMock = NewpasswordHasherMock(ctrl)
+		userRepositoryMock = NewuserRepositoryMock(ctrl)
 		auc = NewAuthUseCase(
 			tokenManagerMock,
 			idObfuscatorMock,
@@ -228,8 +234,8 @@ var _ = Describe("AuthUseCase", func() {
 			ctx  context.Context
 			user *core.User
 
-			tokens auth.Tokens
-			err    error
+			token auth.Token
+			err   error
 
 			getUserByNameOK = func() {
 				userRepositoryMock.EXPECT().
@@ -251,8 +257,8 @@ var _ = Describe("AuthUseCase", func() {
 					core.UserIdKey: fmt.Sprintf("%v", user.Id),
 				}
 				tokenManagerMock.EXPECT().
-					GenerateTokens(claims).
-					Return(authMock.NewTokens(GinkgoT()), nil)
+					GenerateToken(claims).
+					Return(auth.NewtokenMock(ctrl), nil)
 			}
 		)
 
@@ -262,7 +268,7 @@ var _ = Describe("AuthUseCase", func() {
 		})
 
 		JustBeforeEach(func() {
-			tokens, err = auc.Login(ctx, user)
+			token, err = auc.Login(ctx, user)
 		})
 
 		When("getting user by name fails", func() {
@@ -273,7 +279,7 @@ var _ = Describe("AuthUseCase", func() {
 			})
 
 			It("returns nil", func() {
-				Expect(tokens).To(BeNil())
+				Expect(token).To(BeNil())
 			})
 			It("fails", func() {
 				Expect(err).NotTo(Succeed())
@@ -288,7 +294,7 @@ var _ = Describe("AuthUseCase", func() {
 			})
 
 			It("returns nil", func() {
-				Expect(tokens).To(BeNil())
+				Expect(token).To(BeNil())
 			})
 			It("fails", func() {
 				Expect(err).NotTo(Succeed())
@@ -308,7 +314,7 @@ var _ = Describe("AuthUseCase", func() {
 			})
 
 			It("returns nil", func() {
-				Expect(tokens).To(BeNil())
+				Expect(token).To(BeNil())
 			})
 			It("fails", func() {
 				Expect(err).NotTo(Succeed())
@@ -325,11 +331,11 @@ var _ = Describe("AuthUseCase", func() {
 
 				idObfuscatorMock.EXPECT().
 					ObfuscateId(user.Id).
-					Return(0, errors.New(""))
+					Return(int64(0), errors.New(""))
 			})
 
 			It("returns nil", func() {
-				Expect(tokens).To(BeNil())
+				Expect(token).To(BeNil())
 			})
 			It("fails", func() {
 				Expect(err).NotTo(Succeed())
@@ -343,14 +349,14 @@ var _ = Describe("AuthUseCase", func() {
 				obfuscateIdOK()
 
 				tokenManagerMock.EXPECT().
-					GenerateTokens(map[string]string{
+					GenerateToken(map[string]string{
 						core.UserIdKey: fmt.Sprintf("%v", user.Id),
 					}).
 					Return(nil, errors.New(""))
 			})
 
 			It("returns nil", func() {
-				Expect(tokens).To(BeNil())
+				Expect(token).To(BeNil())
 			})
 			It("fails", func() {
 				Expect(err).NotTo(Succeed())
@@ -365,8 +371,8 @@ var _ = Describe("AuthUseCase", func() {
 				generateTokensOK()
 			})
 
-			It("returns non-nil tokens", func() {
-				Expect(tokens).NotTo(BeNil())
+			It("returns non-nil token", func() {
+				Expect(token).NotTo(BeNil())
 			})
 			It("succeeds", func() {
 				Expect(err).To(Succeed())
@@ -399,7 +405,7 @@ var _ = Describe("AuthUseCase", func() {
 
 		BeforeEach(func() {
 			ctx = context.Background()
-			token = authMock.NewAccessToken(GinkgoT())
+			token = auth.NewaccessTokenMock(ctrl)
 		})
 
 		JustBeforeEach(func() {
@@ -427,7 +433,7 @@ var _ = Describe("AuthUseCase", func() {
 
 				idObfuscatorMock.EXPECT().
 					DeobfuscateId(userId).
-					Return(0, errors.New(""))
+					Return(int64(0), errors.New(""))
 			})
 
 			It("returns zero", func() {
