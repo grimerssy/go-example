@@ -200,7 +200,7 @@ var _ = Describe("AuthUseCase", func() {
 			})
 		})
 
-		When("creating user fails with ErrUserAlreadyExists", func() {
+		When("creating user fails with errUserAlreadyExists", func() {
 			BeforeEach(func() {
 				hashPasswordOK()
 
@@ -286,7 +286,7 @@ var _ = Describe("AuthUseCase", func() {
 			})
 		})
 
-		When("getting user by name fails with ErrUserNotFound", func() {
+		When("getting user by name fails with errUserNotFound", func() {
 			BeforeEach(func() {
 				userRepositoryMock.EXPECT().
 					GetUserByName(ctx, user.Name).
