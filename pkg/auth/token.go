@@ -1,11 +1,10 @@
 package auth
 
-//go:generate mockgen -source=tokens.go -destination=tokens_mock.go -package=auth -mock_names=Token=tokenMock,AccessToken=accessTokenMock
+//go:generate mockgen -source=token.go -destination=token_mock.go -package=auth -mock_names=Token=tokenMock,AccessToken=accessTokenMock
 type Token interface {
 	AccessToken
 }
 
-//go:generate mockery --name=AccessToken --with-expecter --quiet
 type AccessToken interface {
 	AccessToken() string
 }
