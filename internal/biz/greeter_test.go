@@ -14,8 +14,8 @@ var _ = Describe("NewGreeterUseCase", func() {
 	var (
 		guc *GreeterUseCase
 
-		ctrl               *gomock.Controller
-		userRepositoryMock *userRepositoryMock
+		ctrl                      *gomock.Controller
+		greeterUserRepositoryMock *greeterUserRepositoryMock
 
 		test func()
 	)
@@ -26,13 +26,13 @@ var _ = Describe("NewGreeterUseCase", func() {
 
 	JustBeforeEach(func() {
 		test = func() {
-			guc = NewGreeterUseCase(userRepositoryMock)
+			guc = NewGreeterUseCase(greeterUserRepositoryMock)
 		}
 	})
 
 	When("userRepository is nil", func() {
 		BeforeEach(func() {
-			userRepositoryMock = nil
+			greeterUserRepositoryMock = nil
 		})
 
 		It("panics", func() {
@@ -45,7 +45,7 @@ var _ = Describe("NewGreeterUseCase", func() {
 
 	When("userRepository is not nil", func() {
 		BeforeEach(func() {
-			userRepositoryMock = NewuserRepositoryMock(ctrl)
+			greeterUserRepositoryMock = NewgreeterUserRepositoryMock(ctrl)
 		})
 
 		It("does not panic", func() {
@@ -61,14 +61,14 @@ var _ = Describe("GreeterUseCase", func() {
 	var (
 		guc *GreeterUseCase
 
-		ctrl               *gomock.Controller
-		userRepositoryMock *userRepositoryMock
+		ctrl                      *gomock.Controller
+		greeterUserRepositoryMock *greeterUserRepositoryMock
 	)
 
 	BeforeEach(func() {
 		ctrl = gomock.NewController(GinkgoT())
-		userRepositoryMock = NewuserRepositoryMock(ctrl)
-		guc = NewGreeterUseCase(userRepositoryMock)
+		greeterUserRepositoryMock = NewgreeterUserRepositoryMock(ctrl)
+		guc = NewGreeterUseCase(greeterUserRepositoryMock)
 	})
 
 	Describe("Greet", func() {
@@ -83,12 +83,12 @@ var _ = Describe("GreeterUseCase", func() {
 			expectedUser = &core.User{Count: 1}
 
 			getUserByIdOK = func() {
-				userRepositoryMock.EXPECT().
+				greeterUserRepositoryMock.EXPECT().
 					GetUserById(ctx, userId).
 					Return(user, nil)
 			}
 			updateUserCountOK = func() {
-				userRepositoryMock.EXPECT().
+				greeterUserRepositoryMock.EXPECT().
 					UpdateUserCount(ctx, user).
 					Return(nil)
 			}
@@ -105,7 +105,7 @@ var _ = Describe("GreeterUseCase", func() {
 
 		When("getting user by id fails", func() {
 			BeforeEach(func() {
-				userRepositoryMock.EXPECT().
+				greeterUserRepositoryMock.EXPECT().
 					GetUserById(ctx, userId).
 					Return(nil, errors.New(""))
 			})
@@ -120,7 +120,7 @@ var _ = Describe("GreeterUseCase", func() {
 
 		When("getting user by id fails with errUserNotFound", func() {
 			BeforeEach(func() {
-				userRepositoryMock.EXPECT().
+				greeterUserRepositoryMock.EXPECT().
 					GetUserById(ctx, userId).
 					Return(nil, errUserNotFound)
 			})
@@ -140,7 +140,7 @@ var _ = Describe("GreeterUseCase", func() {
 			BeforeEach(func() {
 				getUserByIdOK()
 
-				userRepositoryMock.EXPECT().
+				greeterUserRepositoryMock.EXPECT().
 					UpdateUserCount(ctx, user).
 					Return(errors.New(""))
 			})

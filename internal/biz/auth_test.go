@@ -16,11 +16,11 @@ var _ = Describe("NewAuthUseCase", func() {
 	var (
 		auc *AuthUseCase
 
-		ctrl               *gomock.Controller
-		tokenManagerMock   *tokenManagerMock
-		idObfuscatorMock   *idObfuscatorMock
-		passwordHasherMock *passwordHasherMock
-		userRepositoryMock *userRepositoryMock
+		ctrl                   *gomock.Controller
+		tokenManagerMock       *tokenManagerMock
+		idObfuscatorMock       *idObfuscatorMock
+		passwordHasherMock     *passwordHasherMock
+		authUserRepositoryMock *authUserRepositoryMock
 
 		test func()
 	)
@@ -35,7 +35,7 @@ var _ = Describe("NewAuthUseCase", func() {
 				tokenManagerMock,
 				idObfuscatorMock,
 				passwordHasherMock,
-				userRepositoryMock,
+				authUserRepositoryMock,
 			)
 		}
 	})
@@ -45,7 +45,7 @@ var _ = Describe("NewAuthUseCase", func() {
 			tokenManagerMock = nil
 			idObfuscatorMock = NewidObfuscatorMock(ctrl)
 			passwordHasherMock = NewpasswordHasherMock(ctrl)
-			userRepositoryMock = NewuserRepositoryMock(ctrl)
+			authUserRepositoryMock = NewauthUserRepositoryMock(ctrl)
 		})
 
 		It("panics", func() {
@@ -61,7 +61,7 @@ var _ = Describe("NewAuthUseCase", func() {
 			tokenManagerMock = NewtokenManagerMock(ctrl)
 			idObfuscatorMock = nil
 			passwordHasherMock = NewpasswordHasherMock(ctrl)
-			userRepositoryMock = NewuserRepositoryMock(ctrl)
+			authUserRepositoryMock = NewauthUserRepositoryMock(ctrl)
 		})
 
 		It("panics", func() {
@@ -77,7 +77,7 @@ var _ = Describe("NewAuthUseCase", func() {
 			tokenManagerMock = NewtokenManagerMock(ctrl)
 			idObfuscatorMock = NewidObfuscatorMock(ctrl)
 			passwordHasherMock = nil
-			userRepositoryMock = NewuserRepositoryMock(ctrl)
+			authUserRepositoryMock = NewauthUserRepositoryMock(ctrl)
 		})
 
 		It("panics", func() {
@@ -93,7 +93,7 @@ var _ = Describe("NewAuthUseCase", func() {
 			tokenManagerMock = NewtokenManagerMock(ctrl)
 			idObfuscatorMock = NewidObfuscatorMock(ctrl)
 			passwordHasherMock = NewpasswordHasherMock(ctrl)
-			userRepositoryMock = nil
+			authUserRepositoryMock = nil
 		})
 
 		It("panics", func() {
@@ -109,7 +109,7 @@ var _ = Describe("NewAuthUseCase", func() {
 			tokenManagerMock = NewtokenManagerMock(ctrl)
 			idObfuscatorMock = NewidObfuscatorMock(ctrl)
 			passwordHasherMock = NewpasswordHasherMock(ctrl)
-			userRepositoryMock = NewuserRepositoryMock(ctrl)
+			authUserRepositoryMock = NewauthUserRepositoryMock(ctrl)
 		})
 
 		It("does not panic", func() {
@@ -125,11 +125,11 @@ var _ = Describe("AuthUseCase", func() {
 	var (
 		auc *AuthUseCase
 
-		ctrl               *gomock.Controller
-		tokenManagerMock   *tokenManagerMock
-		idObfuscatorMock   *idObfuscatorMock
-		passwordHasherMock *passwordHasherMock
-		userRepositoryMock *userRepositoryMock
+		ctrl                   *gomock.Controller
+		tokenManagerMock       *tokenManagerMock
+		idObfuscatorMock       *idObfuscatorMock
+		passwordHasherMock     *passwordHasherMock
+		authUserRepositoryMock *authUserRepositoryMock
 	)
 
 	BeforeEach(func() {
@@ -137,12 +137,12 @@ var _ = Describe("AuthUseCase", func() {
 		idObfuscatorMock = NewidObfuscatorMock(ctrl)
 		tokenManagerMock = NewtokenManagerMock(ctrl)
 		passwordHasherMock = NewpasswordHasherMock(ctrl)
-		userRepositoryMock = NewuserRepositoryMock(ctrl)
+		authUserRepositoryMock = NewauthUserRepositoryMock(ctrl)
 		auc = NewAuthUseCase(
 			tokenManagerMock,
 			idObfuscatorMock,
 			passwordHasherMock,
-			userRepositoryMock,
+			authUserRepositoryMock,
 		)
 	})
 
@@ -159,7 +159,7 @@ var _ = Describe("AuthUseCase", func() {
 					Return(user.Password, nil)
 			}
 			createUserOK = func() {
-				userRepositoryMock.EXPECT().
+				authUserRepositoryMock.EXPECT().
 					CreateUser(ctx, user).
 					Return(nil)
 			}
@@ -190,7 +190,7 @@ var _ = Describe("AuthUseCase", func() {
 			BeforeEach(func() {
 				hashPasswordOK()
 
-				userRepositoryMock.EXPECT().
+				authUserRepositoryMock.EXPECT().
 					CreateUser(ctx, user).
 					Return(errors.New(""))
 			})
@@ -204,7 +204,7 @@ var _ = Describe("AuthUseCase", func() {
 			BeforeEach(func() {
 				hashPasswordOK()
 
-				userRepositoryMock.EXPECT().
+				authUserRepositoryMock.EXPECT().
 					CreateUser(ctx, user).
 					Return(errUserAlreadyExists)
 			})
@@ -238,7 +238,7 @@ var _ = Describe("AuthUseCase", func() {
 			err   error
 
 			getUserByNameOK = func() {
-				userRepositoryMock.EXPECT().
+				authUserRepositoryMock.EXPECT().
 					GetUserByName(ctx, user.Name).
 					Return(user, nil)
 			}
@@ -273,7 +273,7 @@ var _ = Describe("AuthUseCase", func() {
 
 		When("getting user by name fails", func() {
 			BeforeEach(func() {
-				userRepositoryMock.EXPECT().
+				authUserRepositoryMock.EXPECT().
 					GetUserByName(ctx, user.Name).
 					Return(nil, errors.New(""))
 			})
@@ -288,7 +288,7 @@ var _ = Describe("AuthUseCase", func() {
 
 		When("getting user by name fails with errUserNotFound", func() {
 			BeforeEach(func() {
-				userRepositoryMock.EXPECT().
+				authUserRepositoryMock.EXPECT().
 					GetUserByName(ctx, user.Name).
 					Return(nil, errUserNotFound)
 			})

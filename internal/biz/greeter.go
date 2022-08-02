@@ -5,14 +5,21 @@ import (
 	"fmt"
 	"reflect"
 
+	"github.com/grimerssy/go-example/internal/core"
 	"github.com/grimerssy/go-example/pkg/grpc_err"
 )
 
-type GreeterUseCase struct {
-	users UserRepository
+//go:generate mockgen -source=greeter.go -destination=greeter_mock.go -package=biz -mock_names=GreeterUserRepository=greeterUserRepositoryMock
+type GreeterUserRepository interface {
+	GetUserById(ctx context.Context, id int64) (*core.User, error)
+	UpdateUserCount(ctx context.Context, user *core.User) error
 }
 
-func NewGreeterUseCase(userRepository UserRepository) *GreeterUseCase {
+type GreeterUseCase struct {
+	users GreeterUserRepository
+}
+
+func NewGreeterUseCase(userRepository GreeterUserRepository) *GreeterUseCase {
 	if reflect.ValueOf(userRepository).IsNil() {
 		panic("userRepository cannot be nil")
 	}

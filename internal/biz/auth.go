@@ -11,18 +11,39 @@ import (
 	"github.com/grimerssy/go-example/pkg/grpc_err"
 )
 
+//go:generate mockgen -source=auth.go -destination=auth_mock.go -package=biz -mock_names=TokenManager=tokenManagerMock,IdObfuscator=idObfuscatorMock,PasswordHasher=passwordHasherMock,AuthUserRepository=authUserRepositoryMock
+type TokenManager interface {
+	GenerateToken(claims map[string]string) (auth.Token, error)
+	ParseToken(token auth.AccessToken) (map[string]string, error)
+}
+
+type IdObfuscator interface {
+	ObfuscateId(id int64) (int64, error)
+	DeobfuscateId(obfuscated int64) (int64, error)
+}
+
+type PasswordHasher interface {
+	HashPassword(password string) (string, error)
+	IsPasswordEqualToHash(password string, hash string) bool
+}
+
+type AuthUserRepository interface {
+	CreateUser(ctx context.Context, user *core.User) error
+	GetUserByName(ctx context.Context, name string) (*core.User, error)
+}
+
 type AuthUseCase struct {
 	tokens    TokenManager
 	ids       IdObfuscator
 	passwords PasswordHasher
-	users     UserRepository
+	users     AuthUserRepository
 }
 
 func NewAuthUseCase(
 	tokenManager TokenManager,
 	idObfuscator IdObfuscator,
 	passwordHasher PasswordHasher,
-	userRepository UserRepository,
+	userRepository AuthUserRepository,
 ) *AuthUseCase {
 	switch {
 	case reflect.ValueOf(idObfuscator).IsNil():
