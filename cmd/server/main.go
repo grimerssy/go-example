@@ -39,7 +39,16 @@ func getEnvironment() core.Environment {
 	isProd := flag.Bool("prod", false, "set production environment")
 	flag.Parse()
 
+	setCount := 0
+	for _, flag := range []*bool{isDev, isStage, isProd} {
+		if *flag {
+			setCount++
+		}
+	}
+
 	switch {
+	case setCount != 1:
+		panic("exactly one environment flag must be set (-dev/-stage/-prod)")
 	case *isDev:
 		return core.Development
 	case *isStage:
@@ -47,6 +56,6 @@ func getEnvironment() core.Environment {
 	case *isProd:
 		return core.Production
 	default:
-		panic("exactly one environment flag must be set (-dev/-stage/-prod)")
+		panic("did not match any of the env flags")
 	}
 }

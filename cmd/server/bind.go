@@ -1,3 +1,6 @@
+//go:build wireinject
+// +build wireinject
+
 package main
 
 import (
@@ -11,7 +14,7 @@ import (
 	mwLog "github.com/grimerssy/go-example/internal/mw/log"
 	"github.com/grimerssy/go-example/internal/server"
 	"github.com/grimerssy/go-example/internal/service"
-	"github.com/grimerssy/go-example/internal/service/v1"
+	v1 "github.com/grimerssy/go-example/internal/service/v1"
 	"github.com/grimerssy/go-example/pkg/auth"
 	"github.com/grimerssy/go-example/pkg/database"
 	"github.com/grimerssy/go-example/pkg/hash"

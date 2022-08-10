@@ -45,8 +45,7 @@ message SignupRequest {
   }];
 }
 
-message SignupResponse {
-}
+message SignupResponse {}
 
 message LoginRequest {
   string name = 1;
